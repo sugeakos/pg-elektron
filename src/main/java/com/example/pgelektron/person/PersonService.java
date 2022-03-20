@@ -21,4 +21,17 @@ public class PersonService implements UserDetailsService {
         return personRepository.findPersonByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(String.format(USER_NOT_FOUND)));
     }
+
+    public String passwordEncoder(String password){
+        return bCryptPasswordEncoder.encode(password);
+    }
+
+    public Person savePerson(Person person){
+       return personRepository.save(person);
+    }
+
+    public Person getPersonById(Long id){
+        return personRepository.getById(id);
+    }
+
 }

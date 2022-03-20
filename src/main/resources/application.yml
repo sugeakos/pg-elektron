@@ -6,7 +6,7 @@ server:
 spring:
   datasource:
     password: password
-    url: jdbc:postgresql://localhost:5432/pg-elektron
+    url: jdbc:postgresql://localhost:5432/pg_elektron
     username: postgres
 
   jpa:
