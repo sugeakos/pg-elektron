@@ -35,6 +35,8 @@ public class DataLoader implements CommandLineRunner {
         System.out.println("Loading Csutomer and TV data......");
         loadCustomerAndTv();
         System.out.println("-----------------------------");
+
+        System.out.println(personService.getAllPersons()+ " ");
     }
 
     private void loadPersonData() {
@@ -45,6 +47,7 @@ public class DataLoader implements CommandLineRunner {
         person1.setPassword(personService.passwordEncoder("admin"));
         person1.setPhoneFix("66433");
         person1.setPhoneMobile("77777");
+        person1.setAddress("ahfkjshdfkj");
         person1.setUserRole(PersonRole.ADMIN);
         personService.savePerson(person1);
 
@@ -55,6 +58,7 @@ public class DataLoader implements CommandLineRunner {
         person2.setPassword(personService.passwordEncoder("sghjfghjhkdsfjfhjksdhfkshfksh65745$%"));
         person2.setPhoneFix("656756");
         person2.setPhoneMobile("5765657");
+        person2.setAddress("ashgjakhf");
         person2.setUserRole(PersonRole.CUSTOMER);
         personService.savePerson(person2);
     }
@@ -83,13 +87,20 @@ public class DataLoader implements CommandLineRunner {
         tv1.setTvCategoryId(tvCategoryService.getTvCategoryById(1L));
         tv1.setErrorSeenByCustomer("Nincs hang!");
         tv1.setReservedDateToRepair(LocalDateTime.now());
-        tv1.setCustomer(personService.getPersonById(1L));
+        tv1.setPerson(personService.getPersonById(1L));
         tvService.saveTv(tv1);
+
+        tvService.createNewTv(personService.getPersonById(2L),tvCategoryService.getTvCategoryById(3L),"dhfkshfkjsfhsdfkh", LocalDateTime.now());
 
         Customer customer1 = new Customer();
         customer1.setPerson_id(personService.getPersonById(1L));
         customer1.setTv_id(tvService.getTvById(1L));
         customerService.saveCustomer(customer1);
+
+        Customer customer2 = new Customer();
+        customer2.setPerson_id(personService.getPersonById(2L));
+        customer2.setTv_id(tvService.getTvById(2L));
+        customerService.saveCustomer(customer2);
 
     }
 }

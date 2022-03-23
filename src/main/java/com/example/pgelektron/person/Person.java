@@ -36,12 +36,13 @@ public class Person implements UserDetails {
     private String password;
     private String phoneFix;
     private String phoneMobile;
+    private String address;
 
     @Enumerated(EnumType.STRING)
     private PersonRole userRole;
 
     private boolean locked = false;
-    private boolean enabled = false;
+    private boolean enabled = true;
 
 
     public Person(String firstName,
@@ -50,6 +51,7 @@ public class Person implements UserDetails {
                   String password,
                   String phoneFix,
                   String phoneMobile,
+                  String address,
                   PersonRole userRole) {
 
         this.firstName = firstName;
@@ -58,7 +60,9 @@ public class Person implements UserDetails {
         this.password = password;
         this.phoneFix = phoneFix;
         this.phoneMobile = phoneMobile;
+        this.address = address;
         this.userRole = userRole;
+
     }
 
     @Override
