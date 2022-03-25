@@ -57,6 +57,10 @@ public class DataLoader implements CommandLineRunner {
         role4.setDescription("ROLE_SUPER_ADMIN");
         personService.saveRole(role4);
 
+        PersonRole role5 = new PersonRole();
+        role5.setDescription("ROLE_EMPLOYEE");
+        personService.saveRole(role5);
+
 
     }
 
@@ -104,18 +108,24 @@ public class DataLoader implements CommandLineRunner {
     }
 
     public void loadCustomerAndTv(){
+
+
         TV tv1 = new TV();
+        tv1.setPerson(personService.getPersonById(1L));
         tv1.setTvCategoryId(tvCategoryService.getTvCategoryById(1L));
         tv1.setErrorSeenByCustomer("Nincs hang!");
         tv1.setReservedDateToRepair(LocalDateTime.now());
-        tv1.setPerson(personService.getPersonById(1L));
-        tvService.saveTv(tv1);
 
-        tvService.createNewTv(personService.getPersonById(2L),tvCategoryService.getTvCategoryById(3L),"dhfkshfkjsfhsdfkh", LocalDateTime.now());
+
+        tvService.saveTv(tv1);
 
         Customer customer1 = new Customer();
         customer1.setPerson_id(personService.getPersonById(1L));
-        customer1.setTv_id(tv1);
+        customer1.getTvs().clear();
+        customer1.getTvs().add(tv1);
         customerService.saveCustomer(customer1);
+        //tvService.createNewTv(personService.getPersonById(2L),tvCategoryService.getTvCategoryById(3L),"dhfkshfkjsfhsdfkh", LocalDateTime.now());
+
+
     }
 }

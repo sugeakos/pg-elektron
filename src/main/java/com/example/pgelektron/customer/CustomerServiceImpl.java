@@ -1,17 +1,21 @@
 package com.example.pgelektron.customer;
 
-import com.example.pgelektron.tv.TvServiceImpl;
+import com.example.pgelektron.tv.TV;
+import com.example.pgelektron.tv.TvService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
-    private final TvServiceImpl tvService;
+
 
     @Override
     public List<Customer> findAllCustomers(){

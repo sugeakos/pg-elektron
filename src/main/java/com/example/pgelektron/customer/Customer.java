@@ -10,6 +10,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Getter
 @Setter
@@ -25,8 +26,7 @@ public class Customer{
     @JoinColumn(nullable = false, name = "customer_person_id")
     private Person person_id;
 
-    @OneToOne
-    @JoinColumn(nullable = false, name = "customers_tv_id")
-    private TV tv_id;
+    @OneToMany(mappedBy = "person")
+    private List<TV> tvs = new ArrayList<>();
 
 }

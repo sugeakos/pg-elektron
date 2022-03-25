@@ -6,10 +6,15 @@ import com.example.pgelektron.tvcategory.TVCategory;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.lang.Nullable;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 import java.time.LocalDateTime;
 
 @Getter
@@ -22,7 +27,7 @@ public class TV {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tv_sequence")
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(nullable = false, name = "customer_person_id")
     private Person person;
 
@@ -33,7 +38,9 @@ public class TV {
     private String errorSeenByCustomer;
     private LocalDateTime reservedDateToRepair;
 
-
     private String repairedError;
     private LocalDateTime dateOfCorrection;
+
+    private boolean isItStillInProgress = true;
+
 }
