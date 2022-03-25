@@ -9,7 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 @Repository
 public interface PersonRepository extends JpaRepository<Person, Long> {
-    Optional<Person> findPersonByEmail(String email);
+    Person findPersonByEmail(String email);
+
 
     @Transactional
     @Modifying

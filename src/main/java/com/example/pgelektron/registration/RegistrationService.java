@@ -2,8 +2,8 @@ package com.example.pgelektron.registration;
 
 import com.example.pgelektron.email.EmailSender;
 import com.example.pgelektron.person.Person;
-import com.example.pgelektron.person.PersonRole;
-import com.example.pgelektron.person.PersonService;
+import com.example.pgelektron.person.role.PersonRole;
+import com.example.pgelektron.person.PersonServiceImpl;
 import com.example.pgelektron.registration.token.ConfirmationToken;
 import com.example.pgelektron.registration.token.ConfirmationTokenService;
 import lombok.AllArgsConstructor;
@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class RegistrationService {
 
 
-    private final PersonService personService;
+    private final PersonServiceImpl personService;
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailSender emailSender;
 
@@ -30,8 +30,8 @@ public class RegistrationService {
                         request.getPassword(),
                         request.getPhoneFix(),
                         request.getPhoneMobile(),
-                        request.getAddress(),
-                        PersonRole.CUSTOMER
+                        request.getAddress()
+
                 )
         );
         String link = "http://localhost:8080/api/v1/registration/confirm?token=" + token;

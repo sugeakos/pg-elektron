@@ -2,12 +2,14 @@ package com.example.pgelektron.customer;
 
 import com.example.pgelektron.person.Person;
 import com.example.pgelektron.tv.TV;
-import com.example.pgelektron.tvcategory.TVCategory;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
 @Getter
 @Setter

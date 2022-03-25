@@ -1,6 +1,6 @@
 package com.example.pgelektron.person;
 
-import lombok.EqualsAndHashCode;
+import com.example.pgelektron.person.role.PersonRole;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,19 +8,13 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
+import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
 @Getter
 @Setter
-@EqualsAndHashCode
 @NoArgsConstructor
 @Entity
 public class Person implements UserDetails {
@@ -38,8 +32,9 @@ public class Person implements UserDetails {
     private String phoneMobile;
     private String address;
 
-    @Enumerated(EnumType.STRING)
-    private PersonRole userRole;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinColumn(nullable = false, name = "user_role")
+    private Collection<PersonRole> userRole = new ArrayList<>();
 
     private boolean locked = false;
     private boolean enabled = true;
@@ -51,8 +46,7 @@ public class Person implements UserDetails {
                   String password,
                   String phoneFix,
                   String phoneMobile,
-                  String address,
-                  PersonRole userRole) {
+                  String address) {
 
         this.firstName = firstName;
         this.lastName = lastName;
@@ -61,13 +55,12 @@ public class Person implements UserDetails {
         this.phoneFix = phoneFix;
         this.phoneMobile = phoneMobile;
         this.address = address;
-        this.userRole = userRole;
 
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(userRole.name());
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(getUserRole().toString());
         return Collections.singletonList(authority);
     }
 

@@ -3,12 +3,12 @@ package com.example.pgelektron.bootstrap;
 import com.example.pgelektron.customer.Customer;
 import com.example.pgelektron.customer.CustomerService;
 import com.example.pgelektron.person.Person;
-import com.example.pgelektron.person.PersonRole;
-import com.example.pgelektron.person.PersonService;
+import com.example.pgelektron.person.role.PersonRole;
+import com.example.pgelektron.person.PersonServiceImpl;
 import com.example.pgelektron.tv.TV;
-import com.example.pgelektron.tv.TvService;
+import com.example.pgelektron.tv.TvServiceImpl;
 import com.example.pgelektron.tvcategory.TVCategory;
-import com.example.pgelektron.tvcategory.TvCategoryService;
+import com.example.pgelektron.tvcategory.TvCategoryServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -19,13 +19,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class DataLoader implements CommandLineRunner {
 
-    private final PersonService personService;
-    private final TvCategoryService tvCategoryService;
-    private final TvService tvService;
+    private final PersonServiceImpl personService;
+    private final TvCategoryServiceImpl tvCategoryService;
+    private final TvServiceImpl tvService;
     private final CustomerService customerService;
 
     @Override
     public void run(String... args) throws Exception {
+        loadPersonRoles();
         System.out.println("Loading Person data....");
         loadPersonData();
         System.out.println("--------------");
@@ -39,6 +40,26 @@ public class DataLoader implements CommandLineRunner {
         System.out.println(personService.getAllPersons()+ " ");
     }
 
+    private void loadPersonRoles(){
+        PersonRole role1 = new PersonRole();
+        role1.setDescription("ROLE_USER");
+        personService.saveRole(role1);
+
+        PersonRole role2 = new PersonRole();
+        role2.setDescription("ROLE_MANAGER");
+        personService.saveRole(role2);
+
+        PersonRole role3 = new PersonRole();
+        role3.setDescription("ROLE_ADMIN");
+        personService.saveRole(role3);
+
+        PersonRole role4 = new PersonRole();
+        role4.setDescription("ROLE_SUPER_ADMIN");
+        personService.saveRole(role4);
+
+
+    }
+
     private void loadPersonData() {
         Person person1 = new Person();
         person1.setFirstName("Akos");
@@ -48,7 +69,7 @@ public class DataLoader implements CommandLineRunner {
         person1.setPhoneFix("66433");
         person1.setPhoneMobile("77777");
         person1.setAddress("ahfkjshdfkj");
-        person1.setUserRole(PersonRole.ADMIN);
+        person1.getUserRole().add(personService.findRoleByDescription("ROLE_ADMIN"));
         personService.savePerson(person1);
 
         Person person2 = new Person();
@@ -59,7 +80,7 @@ public class DataLoader implements CommandLineRunner {
         person2.setPhoneFix("656756");
         person2.setPhoneMobile("5765657");
         person2.setAddress("ashgjakhf");
-        person2.setUserRole(PersonRole.CUSTOMER);
+        person2.getUserRole().add(personService.findRoleByDescription("ROLE_USER"));
         personService.savePerson(person2);
     }
     public void loadTvCategory(){
@@ -94,13 +115,7 @@ public class DataLoader implements CommandLineRunner {
 
         Customer customer1 = new Customer();
         customer1.setPerson_id(personService.getPersonById(1L));
-        customer1.setTv_id(tvService.getTvById(1L));
+        customer1.setTv_id(tv1);
         customerService.saveCustomer(customer1);
-
-        Customer customer2 = new Customer();
-        customer2.setPerson_id(personService.getPersonById(2L));
-        customer2.setTv_id(tvService.getTvById(2L));
-        customerService.saveCustomer(customer2);
-
     }
 }
