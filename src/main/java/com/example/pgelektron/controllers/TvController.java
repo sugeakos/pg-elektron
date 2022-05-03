@@ -1,9 +1,8 @@
 package com.example.pgelektron.controllers;
 
-import com.example.pgelektron.person.Person;
-import com.example.pgelektron.person.role.PersonRole;
-import com.example.pgelektron.tv.TV;
-import com.example.pgelektron.tv.TvService;
+
+import com.example.pgelektron.domain.TV;
+import com.example.pgelektron.service.TvService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;

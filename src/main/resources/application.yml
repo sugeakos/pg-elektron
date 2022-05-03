@@ -1,13 +1,17 @@
+jwt:
+  secret: '[a-zA-Z0-0._]^+$Guidelines89797987forAlphabeticalArraNumeralsandOtherSymbo$'
 server:
   error:
     include-message: always
     include-binding-errors: always
+  port: 8081
 
 spring:
   datasource:
+    username: postgres
     password: password
     url: jdbc:postgresql://localhost:5432/pg_elektron
-    username: postgres
+
 
   jpa:
     hibernate:
@@ -17,19 +21,3 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
     show-sql: true
-  mail:
-    host: localhost
-    port: 1025
-    username: hello
-    password: hello
-    properties:
-      mail:
-        smtp:
-          ssl:
-            trust: "*"
-          auth: true
-          starttls:
-            enable: true
-            connectiontimeout: 5000
-            timeout: 3000
-            writetimeout: 5000

@@ -1,128 +1,157 @@
 package com.example.pgelektron.controllers;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.DecodedJWT;
-import com.example.pgelektron.person.Person;
-import com.example.pgelektron.person.PersonService;
-
-import com.example.pgelektron.person.role.PersonRole;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Data;
+import com.example.pgelektron.domain.HttpResponse;
+import com.example.pgelektron.domain.Person;
+import com.example.pgelektron.domain.PersonPrincipal;
+import com.example.pgelektron.exception.domain.EmailExistException;
+import com.example.pgelektron.exception.domain.EmailNotFoundException;
+import com.example.pgelektron.exception.domain.UserNotFoundException;
+import com.example.pgelektron.exception.domain.UsernameExistException;
+import com.example.pgelektron.service.PersonService;
+import com.example.pgelektron.utility.JwtTokenProvider;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.mail.MessagingException;
 import java.io.IOException;
-import java.net.URI;
 import java.util.*;
-import java.util.stream.Collectors;
 
+import static com.example.pgelektron.constant.ResourceControllerConstant.EMAIL_SENT;
+import static com.example.pgelektron.constant.ResourceControllerConstant.USER_DELETED_SUCCESSFULLY;
+import static com.example.pgelektron.constant.SecurityConstant.JWT_TOKEN_HEADER;
 import static java.util.Arrays.stream;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.http.HttpStatus.FORBIDDEN;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.HttpStatus.*;
 
 @Slf4j
-@Controller
+@RestController
 @RequestMapping("/api/v1")
 public class PersonController {
     private final PersonService personService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public PersonController(PersonService personService) {
+    public PersonController(PersonService personService,
+                            AuthenticationManager authenticationManager,
+                            JwtTokenProvider jwtTokenProvider) {
         this.personService = personService;
+        this.authenticationManager = authenticationManager;
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
+
+    @PostMapping("/registration")
+    public ResponseEntity<Person> registration(@RequestBody Person person)
+            throws UserNotFoundException, EmailExistException, UsernameExistException {
+        Person newPerson =
+                personService.register(person.getFirstName(),
+                        person.getLastName(),
+                        person.getUsername(),
+                        person.getEmail(),
+                        person.getPassword(),
+                        person.getPhoneFix(),
+                        person.getPhoneMobile(),
+                        person.getAddressLine());
+        return new ResponseEntity<>(newPerson, OK);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<Person> login(@RequestBody Person user) {
+        authenticate(user.getUsername(), user.getPassword());
+        Person loginUser = personService.findPersonByUsername(user.getUsername());
+        PersonPrincipal personPrincipal = new PersonPrincipal(loginUser);
+        HttpHeaders jwtHeader = getJwtHeader(personPrincipal);
+        return new ResponseEntity<>(loginUser, jwtHeader, OK);
     }
 
     @GetMapping("/person/list")
-    public String listAllPersons(Model model) {
-        List<Person> personList = personService.getAllPersons();
-        model.addAttribute("persons", personList);
-        return "person/listPersons";
+    public ResponseEntity<List<Person>> listAllPersons() {
+        List<Person> personList = personService.getUsers();
+        return new ResponseEntity<>(personList, OK);
     }
 
-    @GetMapping("/person/all-persons")
-    public ResponseEntity<List<Person>> getAllPersons(){
-        return ResponseEntity.ok().body(personService.getAllPersons());
+    @PostMapping("/add")
+    public ResponseEntity<Person> addNewPerson(@RequestParam("firstName") String firstName,
+                                               @RequestParam("lastName") String lastName,
+                                               @RequestParam("username") String username,
+                                               @RequestParam("email") String email,
+                                               @RequestParam("phoneFix") String phoneFix,
+                                               @RequestParam("phoneMobile") String phoneMobile,
+                                               @RequestParam("addressLine") String addressLine,
+                                               @RequestParam("role") String role,
+                                               @RequestParam("isNonLocked") String isNonLocked,
+                                               @RequestParam("isActive") String isActive)
+            throws UserNotFoundException, EmailExistException, MessagingException, IOException, UsernameExistException {
+        Person newPerson =
+                personService.addNewUser(firstName,
+                        lastName,
+                        username,
+                        email,
+                        phoneFix,
+                        phoneMobile,
+                        addressLine,
+                        role,
+                        Boolean.parseBoolean(isNonLocked),
+                        Boolean.parseBoolean(isActive));
+        return new ResponseEntity<>(newPerson, OK);
+
     }
 
-    @PostMapping("/person/save")
-    public ResponseEntity<Person> saveNewPerson(@RequestBody Person person) {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/v1/person/save").toUriString());
-        return ResponseEntity.created(uri).body(personService.savePerson(person));
-    }
-    @PostMapping("/person/role/save")
-    public ResponseEntity<PersonRole> saveNewRole(@RequestBody PersonRole role) {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/v1/person/role/save").toUriString());
-        return ResponseEntity.created(uri).body(personService.saveRole(role));
-    }
+    @PostMapping("/update")
+    public ResponseEntity<Person> updateUser(@RequestParam("currentUsername") String currentUsername,
+                                                 @RequestParam("firstName") String firstName,
+                                                 @RequestParam("lastName") String lastName,
+                                                 @RequestParam("username") String username,
+                                                 @RequestParam("email") String email,
+                                                 @RequestParam("password") String password,
+                                                 @RequestParam("role") String role,
+                                                 @RequestParam("isActive") String isActive,
+                                                 @RequestParam("isNonLocked") String isNonLocked,
+                                                 @RequestParam(value = "profileImage", required = false) MultipartFile profileImage)
+            throws UserNotFoundException, EmailExistException, IOException, UsernameExistException {
 
-    @PostMapping("/person/role/add-to-person")
-    public ResponseEntity<?> addRoleToUser(@RequestBody RoleToUserForm form) {
-        personService.addRoleToUser(form.getEmail(), form.getRoleName());
-        return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/token/refresh")
-    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-
-            try {
-                String refresh_token = authorizationHeader.substring("Bearer ".length());
-                Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
-                JWTVerifier verifier = JWT.require(algorithm).build();
-                DecodedJWT decodedJWT = verifier.verify(refresh_token);
-                String username = decodedJWT.getSubject();
-                Person person = personService.getPerson(username);
-                String access_token = JWT.create()
-                        .withSubject(person.getUsername())
-                        .withExpiresAt(new Date(System.currentTimeMillis() +10 * 60 * 1000))
-                        .withIssuer(request.getRequestURL().toString())
-                        .withClaim("roles", person.getUserRole().stream().map(PersonRole::getDescription).collect(Collectors.toList()))
-                        .sign(algorithm);
-
-                Map<String, String> tokens = new HashMap<>();
-                tokens.put("access_token", access_token);
-                tokens.put("refresh_token", refresh_token);
-                response.setContentType(APPLICATION_JSON_VALUE);
-                new ObjectMapper().writeValue(response.getOutputStream(), tokens);
-
-            } catch (Exception exception) {
-                log.error("Error logging in: {}",exception.getMessage());
-                response.setHeader("error", exception.getMessage());
-                response.setStatus(FORBIDDEN.value());
-                //response.sendError(FORBIDDEN.value());
-
-                Map<String, String> error = new HashMap<>();
-                error.put("error_message", exception.getMessage());
-                response.setContentType(APPLICATION_JSON_VALUE);
-                new ObjectMapper().writeValue(response.getOutputStream(), error);
-            }
-
-
-        } else {
-            throw new  RuntimeException("Refresh token is missing");
-        }
+        Person updatedPerson = personService.updateUser(currentUsername, firstName, lastName, username, email, password, role,
+                Boolean.parseBoolean(isNonLocked), Boolean.parseBoolean(isActive), profileImage);
+        return new ResponseEntity<>(updatedPerson, OK);
     }
 
+    @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAnyAuthority('user:delete')")
+    public ResponseEntity<HttpResponse> deleteUser(@PathVariable("id") Long id) {
+        personService.deleteUser(id);
+        return response(NO_CONTENT, USER_DELETED_SUCCESSFULLY);
+    }
 
+    @GetMapping("/reset-password/{email}")
+    public ResponseEntity<HttpResponse> resetPassword(@PathVariable("email") String email) throws EmailNotFoundException, MessagingException {
+        personService.resetPassword(email);
+        return response(OK, EMAIL_SENT + email);
+    }
+    private void authenticate(String username, String password) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+    }
 
-}
-@Data
-class RoleToUserForm{
-    private String email;
-    private String roleName;
+    @GetMapping("/find/{username}")
+    public ResponseEntity<Person> getUser(@PathVariable("username") String username) {
+        Person user = personService.findPersonByUsername(username);
+        return new ResponseEntity<>(user, OK);
+    }
+    private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message) {
+        return new ResponseEntity<>(
+                new HttpResponse(httpStatus.value(), httpStatus, httpStatus.getReasonPhrase().toUpperCase(), message.toUpperCase()),
+                httpStatus);
+    }
+
+    private HttpHeaders getJwtHeader(PersonPrincipal personPrincipal) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(JWT_TOKEN_HEADER, jwtTokenProvider.generateJwtToken(personPrincipal));
+        return headers;
+    }
+
 }
