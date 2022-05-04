@@ -1,6 +1,5 @@
-package com.example.pgelektron.service;
+package com.example.pgelektron.person;
 
-import com.example.pgelektron.domain.Person;
 import com.example.pgelektron.exception.domain.EmailExistException;
 import com.example.pgelektron.exception.domain.EmailNotFoundException;
 import com.example.pgelektron.exception.domain.UserNotFoundException;
@@ -41,6 +40,9 @@ public interface PersonService {
                       String newUsername,
                       String newEmail,
                       String newPassword,
+                      String newPhoneFix,
+                      String newPhoneMobile,
+                      String address,
                       String role,
                       boolean isNonLocked,
                       boolean isActive,

@@ -1,13 +1,10 @@
-package com.example.pgelektron.controllers;
+package com.example.pgelektron.person;
 
 import com.example.pgelektron.domain.HttpResponse;
-import com.example.pgelektron.domain.Person;
-import com.example.pgelektron.domain.PersonPrincipal;
 import com.example.pgelektron.exception.domain.EmailExistException;
 import com.example.pgelektron.exception.domain.EmailNotFoundException;
 import com.example.pgelektron.exception.domain.UserNotFoundException;
 import com.example.pgelektron.exception.domain.UsernameExistException;
-import com.example.pgelektron.service.PersonService;
 import com.example.pgelektron.utility.JwtTokenProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -57,7 +54,7 @@ public class PersonController {
                         person.getPassword(),
                         person.getPhoneFix(),
                         person.getPhoneMobile(),
-                        person.getAddressLine());
+                        person.getAddress());
         return new ResponseEntity<>(newPerson, OK);
     }
 
@@ -79,11 +76,11 @@ public class PersonController {
     @PostMapping("/add")
     public ResponseEntity<Person> addNewPerson(@RequestParam("firstName") String firstName,
                                                @RequestParam("lastName") String lastName,
-                                               @RequestParam("username") String username,
+                                               @RequestParam(value = "username", required = false ) String username,
                                                @RequestParam("email") String email,
                                                @RequestParam("phoneFix") String phoneFix,
                                                @RequestParam("phoneMobile") String phoneMobile,
-                                               @RequestParam("addressLine") String addressLine,
+                                               @RequestParam("address") String address,
                                                @RequestParam("role") String role,
                                                @RequestParam("isNonLocked") String isNonLocked,
                                                @RequestParam("isActive") String isActive)
@@ -95,7 +92,7 @@ public class PersonController {
                         email,
                         phoneFix,
                         phoneMobile,
-                        addressLine,
+                        address,
                         role,
                         Boolean.parseBoolean(isNonLocked),
                         Boolean.parseBoolean(isActive));
@@ -105,18 +102,23 @@ public class PersonController {
 
     @PostMapping("/update")
     public ResponseEntity<Person> updateUser(@RequestParam("currentUsername") String currentUsername,
-                                                 @RequestParam("firstName") String firstName,
-                                                 @RequestParam("lastName") String lastName,
-                                                 @RequestParam("username") String username,
-                                                 @RequestParam("email") String email,
-                                                 @RequestParam("password") String password,
-                                                 @RequestParam("role") String role,
-                                                 @RequestParam("isActive") String isActive,
-                                                 @RequestParam("isNonLocked") String isNonLocked,
-                                                 @RequestParam(value = "profileImage", required = false) MultipartFile profileImage)
+                                             @RequestParam(value = "firstName", required = false) String firstName,
+                                             @RequestParam(value = "lastName", required = false) String lastName,
+                                             @RequestParam(value = "username") String username,
+                                             @RequestParam(value = "email") String email,
+                                             @RequestParam(value = "password", required = false) String password,
+                                             @RequestParam(value = "phoneFix", required = false) String phoneFix,
+                                             @RequestParam(value = "phoneMobile", required = false) String phoneMobile,
+                                             @RequestParam(value = "address", required = false) String address,
+                                             @RequestParam(value = "role", required = false) String role,
+                                             @RequestParam(value = "isActive", required = false) String isActive,
+                                             @RequestParam(value = "isNonLocked", required = false) String isNonLocked,
+                                             @RequestParam(value = "profileImage", required = false) MultipartFile profileImage)
             throws UserNotFoundException, EmailExistException, IOException, UsernameExistException {
 
-        Person updatedPerson = personService.updateUser(currentUsername, firstName, lastName, username, email, password, role,
+        Person updatedPerson = personService.updateUser(currentUsername,
+                firstName, lastName, username, email, password,
+                phoneFix, phoneMobile, address, role,
                 Boolean.parseBoolean(isNonLocked), Boolean.parseBoolean(isActive), profileImage);
         return new ResponseEntity<>(updatedPerson, OK);
     }
@@ -133,6 +135,7 @@ public class PersonController {
         personService.resetPassword(email);
         return response(OK, EMAIL_SENT + email);
     }
+
     private void authenticate(String username, String password) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
     }
@@ -142,6 +145,7 @@ public class PersonController {
         Person user = personService.findPersonByUsername(username);
         return new ResponseEntity<>(user, OK);
     }
+
     private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message) {
         return new ResponseEntity<>(
                 new HttpResponse(httpStatus.value(), httpStatus, httpStatus.getReasonPhrase().toUpperCase(), message.toUpperCase()),

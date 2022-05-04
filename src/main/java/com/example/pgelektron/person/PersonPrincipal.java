@@ -1,4 +1,4 @@
-package com.example.pgelektron.domain;
+package com.example.pgelektron.person;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

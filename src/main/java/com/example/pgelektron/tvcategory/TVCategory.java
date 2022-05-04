@@ -1,4 +1,4 @@
-package com.example.pgelektron.domain;
+package com.example.pgelektron.tvcategory;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

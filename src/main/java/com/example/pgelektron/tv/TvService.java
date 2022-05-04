@@ -1,8 +1,7 @@
-package com.example.pgelektron.service;
+package com.example.pgelektron.tv;
 
-import com.example.pgelektron.domain.Person;
-import com.example.pgelektron.domain.TV;
-import com.example.pgelektron.domain.TVCategory;
+import com.example.pgelektron.person.Person;
+import com.example.pgelektron.tvcategory.TVCategory;
 
 import java.time.LocalDateTime;
 import java.util.List;

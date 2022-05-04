@@ -1,6 +1,6 @@
-package com.example.pgelektron.service;
+package com.example.pgelektron.customer;
 
-import com.example.pgelektron.domain.Customer;
+import com.example.pgelektron.customer.Customer;
 
 import java.util.List;
 

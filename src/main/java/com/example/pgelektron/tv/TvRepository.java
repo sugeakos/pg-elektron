@@ -1,6 +1,6 @@
-package com.example.pgelektron.repository;
+package com.example.pgelektron.tv;
 
-import com.example.pgelektron.domain.TV;
+import com.example.pgelektron.tv.TV;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

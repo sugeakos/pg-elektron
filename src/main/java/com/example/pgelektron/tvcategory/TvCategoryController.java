@@ -1,7 +1,7 @@
-package com.example.pgelektron.controllers;
+package com.example.pgelektron.tvcategory;
 
-import com.example.pgelektron.domain.TVCategory;
-import com.example.pgelektron.service.impl.TvCategoryServiceImpl;
+import com.example.pgelektron.tvcategory.TVCategory;
+import com.example.pgelektron.tvcategory.TvCategoryServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;

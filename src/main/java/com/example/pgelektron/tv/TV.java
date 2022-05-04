@@ -1,5 +1,7 @@
-package com.example.pgelektron.domain;
+package com.example.pgelektron.tv;
 
+import com.example.pgelektron.tvcategory.TVCategory;
+import com.example.pgelektron.person.Person;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

@@ -1,6 +1,4 @@
-package com.example.pgelektron.service;
-
-import com.example.pgelektron.domain.TVCategory;
+package com.example.pgelektron.tvcategory;
 
 import java.util.List;
 

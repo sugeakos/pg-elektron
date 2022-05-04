@@ -1,12 +1,9 @@
-package com.example.pgelektron.service.impl;
+package com.example.pgelektron.tv;
 
-import com.example.pgelektron.service.CustomerService;
-import com.example.pgelektron.domain.Person;
-import com.example.pgelektron.domain.TV;
-import com.example.pgelektron.service.PersonService;
-import com.example.pgelektron.domain.TVCategory;
-import com.example.pgelektron.service.TvService;
-import com.example.pgelektron.repository.TvRepository;
+import com.example.pgelektron.customer.CustomerService;
+import com.example.pgelektron.person.Person;
+import com.example.pgelektron.person.PersonService;
+import com.example.pgelektron.tvcategory.TVCategory;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

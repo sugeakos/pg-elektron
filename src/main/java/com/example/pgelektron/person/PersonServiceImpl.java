@@ -1,17 +1,13 @@
-package com.example.pgelektron.service.impl;
+package com.example.pgelektron.person;
 
-import com.example.pgelektron.domain.Person;
-import com.example.pgelektron.domain.PersonPrincipal;
 import com.example.pgelektron.enumeration.Role;
 import com.example.pgelektron.exception.domain.EmailExistException;
 import com.example.pgelektron.exception.domain.EmailNotFoundException;
 import com.example.pgelektron.exception.domain.UserNotFoundException;
 import com.example.pgelektron.exception.domain.UsernameExistException;
-import com.example.pgelektron.repository.PersonRepository;
 
 import com.example.pgelektron.service.EmailService;
 import com.example.pgelektron.service.LoginAttemptService;
-import com.example.pgelektron.service.PersonService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +20,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -32,6 +29,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -81,7 +79,7 @@ public class PersonServiceImpl implements UserDetailsService, PersonService {
                            String phoneFix,
                            String phoneMobile,
                            String address)
-            throws UserNotFoundException, EmailExistException, UsernameExistException{
+            throws UserNotFoundException, EmailExistException, UsernameExistException {
         validateNewUsernameAndEmail(EMPTY, username, email);
         Person user = new Person();
         user.setFirstName(firstName);
@@ -91,7 +89,7 @@ public class PersonServiceImpl implements UserDetailsService, PersonService {
         user.setPassword(bCryptPasswordEncoder.encode(password));
         user.setPhoneFix(phoneFix);
         user.setPhoneMobile(phoneMobile);
-        user.setAddressLine(address);
+        user.setAddress(address);
         user.setJoinDate(new Date());
         user.setActive(true);
         user.setNotLocked(true);
@@ -115,19 +113,32 @@ public class PersonServiceImpl implements UserDetailsService, PersonService {
                              boolean isActive)
             throws UserNotFoundException, EmailExistException, UsernameExistException, IOException, MessagingException {
 
-        validateNewUsernameAndEmail(EMPTY, username, email);
+        String tempUsername = generateNewUsername(firstName);
+        if(username == "" || username == null) {
+
+            validateNewUsernameAndEmail(EMPTY, tempUsername, email);
+        } else {
+            validateNewUsernameAndEmail(EMPTY, username, email);
+        }
+
         String tempPassword = generateRandomNewPassword();
         log.info("New password is: " + tempPassword);
         Person user = new Person();
         user.setFirstName(firstName);
         user.setLastName(lastName);
-        user.setUsername(username);
+
+        if(username == "" || username == null) {
+            user.setUsername(tempUsername);
+        } else {
+            user.setUsername(username);
+        }
+
         user.setEmail(email);
         user.setPassword(bCryptPasswordEncoder.encode(tempPassword));
 
         user.setPhoneFix(phoneFix);
         user.setPhoneMobile(phoneMobile);
-        user.setAddressLine(address);
+        user.setAddress(address);
         user.setJoinDate(new Date());
         user.setActive(true);
         user.setNotLocked(true);
@@ -161,6 +172,9 @@ public class PersonServiceImpl implements UserDetailsService, PersonService {
                              String newUsername,
                              String newEmail,
                              String newPassword,
+                             String newPhoneFix,
+                             String newPhoneMobile,
+                             String newAddress,
                              String role,
                              boolean isNonLocked,
                              boolean isActive,
@@ -169,16 +183,63 @@ public class PersonServiceImpl implements UserDetailsService, PersonService {
         Person currentUser = validateNewUsernameAndEmail(currentUsername, newUsername, newEmail);
 
 
-        currentUser.setFirstName(newFirstName);
-        currentUser.setLastName(newLastName);
-        currentUser.setUsername(newUsername);
-        currentUser.setEmail(newEmail);
-        currentUser.setPassword(bCryptPasswordEncoder.encode(newPassword));
-        currentUser.setActive(isActive);
-        currentUser.setNotLocked(isNonLocked);
-        currentUser.setRole(getRoleEnumName(role).name());
-        currentUser.setAuthorities(getRoleEnumName(role).getAuthorities());
+        if (newFirstName != "" || newFirstName != null) {
+            currentUser.setFirstName(currentUser.getFirstName());
+        } else {
+            currentUser.setFirstName(newFirstName);
+        }
 
+        if (newLastName != "" || newLastName != null) {
+            currentUser.setLastName(currentUser.getLastName());
+        } else {
+            currentUser.setLastName(newLastName);
+        }
+
+        if (currentUser.getUsername().equals(newUsername)) {
+            currentUser.setUsername(currentUser.getUsername());
+        } else {
+            currentUser.setUsername(newUsername);
+        }
+
+        if (currentUser.getEmail().equals(newEmail)){
+            currentUser.setEmail(currentUser.getEmail());
+        } else {
+            currentUser.setEmail(newEmail);
+        }
+
+
+        if (newPassword != "" || newPassword != null) {
+        } else {
+            currentUser.setPassword(bCryptPasswordEncoder.encode(newPassword));
+        }
+
+        if (newPhoneFix != "" || newPhoneFix != null) {
+            currentUser.setPhoneFix(currentUser.getPhoneFix());
+        } else {
+            currentUser.setPhoneFix(newPhoneFix);
+        }
+
+        if (newPhoneMobile != "" || newPhoneMobile != null) {
+            currentUser.setPhoneFix(currentUser.getPhoneMobile());
+        } else {
+            currentUser.setPhoneMobile(newPhoneMobile);
+        }
+
+        if (newAddress != "" || newAddress != null) {
+            currentUser.setAddress(currentUser.getAddress());
+        } else {
+            currentUser.setAddress(newAddress);
+        }
+
+        if (role != "" || role != null) {
+            currentUser.setRole(getRoleEnumName(role).name());
+            currentUser.setAuthorities(getRoleEnumName(role).getAuthorities());
+        } else {
+            currentUser.setRole(getRoleEnumName(currentUser.getRole().toUpperCase()).name());
+            currentUser.setAuthorities(getRoleEnumName(currentUser.getRole().toUpperCase()).getAuthorities());
+        }
+
+        log.info("Current username: " + currentUser.getUsername());
         personRepository.save(currentUser);
         saveProfileImage(currentUser, profileImage);
         return currentUser;
@@ -186,7 +247,7 @@ public class PersonServiceImpl implements UserDetailsService, PersonService {
 
     @Override
     public void deleteUser(Long id) {
-    personRepository.deleteById(id);
+        personRepository.deleteById(id);
     }
 
     @Override
@@ -198,7 +259,7 @@ public class PersonServiceImpl implements UserDetailsService, PersonService {
         String password = generateRandomNewPassword();
         user.setPassword(bCryptPasswordEncoder.encode(password));
         personRepository.save(user);
-        emailService.sendNewPasswordEmail(user.getFirstName(), password,user.getEmail());
+        emailService.sendNewPasswordEmail(user.getFirstName(), password, user.getEmail());
     }
 
     @Override
@@ -259,16 +320,21 @@ public class PersonServiceImpl implements UserDetailsService, PersonService {
         return Role.valueOf(role.toUpperCase());
     }
 
+    private String generateNewUsername(String firstName) {
+        return firstName.toLowerCase() + "-" + LocalDateTime.now().getSecond();
+
+    }
+
     private void saveProfileImage(Person user, MultipartFile profileImage) throws IOException {
         if (profileImage != null) {
             Path userFolder = Paths.get(USER_FOLDER + user.getUsername()).toAbsolutePath().normalize();
-            if (!Files.exists(userFolder)){
+            if (!Files.exists(userFolder)) {
                 Files.createDirectories(userFolder);
                 log.info(DIRECTORY_CREATED + userFolder);
             }
             Files.deleteIfExists(Paths.get(userFolder + user.getUsername() + DOT + JPG_EXTENSION));
 
-            Files.copy(profileImage.getInputStream(),userFolder.resolve(user.getUsername() + DOT + JPG_EXTENSION), REPLACE_EXISTING);
+            Files.copy(profileImage.getInputStream(), userFolder.resolve(user.getUsername() + DOT + JPG_EXTENSION), REPLACE_EXISTING);
 
             user.setProfileImageUrl(setProfileImageUrl(user.getUsername()));
             personRepository.save(user);

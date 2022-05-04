@@ -1,4 +1,4 @@
-package com.example.pgelektron.domain;
+package com.example.pgelektron.person;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
@@ -30,8 +30,7 @@ public class Person implements Serializable {
     private String phoneFix;
     private String phoneMobile;
 
-    @Column(name = "address")
-    private String addressLine;
+    private String address;
 
 
     private String profileImageUrl;
@@ -61,7 +60,7 @@ public class Person implements Serializable {
                   String password,
                   String phoneFix,
                   String phoneMobile,
-                  String addressLine,
+                  String address,
                   String profileImageUrl,
                   Date lastLoginDate,
                   Date lastLoginDateDisplay,
@@ -78,7 +77,7 @@ public class Person implements Serializable {
         this.password = password;
         this.phoneFix = phoneFix;
         this.phoneMobile = phoneMobile;
-        this.addressLine = addressLine;
+        this.address = address;
         this.profileImageUrl = profileImageUrl;
         this.lastLoginDate = lastLoginDate;
         this.lastLoginDateDisplay = lastLoginDateDisplay;

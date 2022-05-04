@@ -1,9 +1,9 @@
 package com.example.pgelektron.bootstrap;
 
-import com.example.pgelektron.service.CustomerService;
-import com.example.pgelektron.service.impl.PersonServiceImpl;
-import com.example.pgelektron.service.impl.TvServiceImpl;
-import com.example.pgelektron.service.impl.TvCategoryServiceImpl;
+import com.example.pgelektron.customer.CustomerService;
+import com.example.pgelektron.person.PersonServiceImpl;
+import com.example.pgelektron.tv.TvServiceImpl;
+import com.example.pgelektron.tvcategory.TvCategoryServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;

@@ -1,8 +1,5 @@
-package com.example.pgelektron.service.impl;
+package com.example.pgelektron.customer;
 
-import com.example.pgelektron.domain.Customer;
-import com.example.pgelektron.repository.CustomerRepository;
-import com.example.pgelektron.service.CustomerService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

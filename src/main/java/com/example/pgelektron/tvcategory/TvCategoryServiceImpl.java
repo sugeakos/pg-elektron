@@ -1,9 +1,6 @@
-package com.example.pgelektron.service.impl;
+package com.example.pgelektron.tvcategory;
 
 
-import com.example.pgelektron.domain.TVCategory;
-import com.example.pgelektron.service.TvCategoryService;
-import com.example.pgelektron.repository.TvCategoryRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

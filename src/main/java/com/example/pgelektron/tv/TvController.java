@@ -1,8 +1,8 @@
-package com.example.pgelektron.controllers;
+package com.example.pgelektron.tv;
 
 
-import com.example.pgelektron.domain.TV;
-import com.example.pgelektron.service.TvService;
+import com.example.pgelektron.tv.TV;
+import com.example.pgelektron.tv.TvService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
