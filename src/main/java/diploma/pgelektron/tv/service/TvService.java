@@ -15,6 +15,6 @@ public interface TvService {
     TvDto saveTv(TvDto dto);
     TvDto getTvById(UUID id);
     TvDto createNewTv(UUID personExternalId, String tvCategoryDescription, String errorSeenByCustomer, Date reservedDateToRepair);
-    List<TvDto> findAllTvsByPersonExternalId(UUID personExternalId);
+    List<TvDto> findAllTvsByPersonExternalId(String personEmail);
     List<TvDto> listAllTv();
 }

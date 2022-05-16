@@ -4,6 +4,7 @@ import diploma.pgelektron.tv.dto.domain.TvDto;
 import diploma.pgelektron.tv.entity.TvEntity;
 import diploma.pgelektron.tv.service.TvService;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -33,6 +34,12 @@ public class TvController {
         TvDto newDto =  tvService.createNewTv(personExternalId, tvCategoryDescription,
                 errorSeenByCustomer, new Date());
         return new ResponseEntity<>(newDto, OK);
+    }
+
+    @GetMapping("/{personExternalId}")
+    public ResponseEntity<List<TvDto>> getAllTvByPerson(@PathVariable("personExternalId") String personExternalId) {
+        List<TvDto> getTvs = tvService.findAllTvsByPersonExternalId(personExternalId);
+        return new ResponseEntity<>(getTvs, OK);
     }
 
 }

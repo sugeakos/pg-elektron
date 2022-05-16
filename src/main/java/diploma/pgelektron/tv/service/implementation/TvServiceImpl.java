@@ -56,13 +56,16 @@ public class TvServiceImpl implements TvService {
         dto.setErrorSeenByCustomer(errorSeenByCustomer);
         dto.setReservedDateToRepair(reservedDateToRepair);
         TvEntity savedEntity = tvConverter.convertDtoToEntity(dto);
+        savedEntity.setItStillInProgress(true);
+        savedEntity.setPersonEntity(personService.findPersonByExternalId(personExternalId));
+        savedEntity.setTvCategoryEntityId(tvCategoryService.getTvByDescription(tvCategoryDescription));
         tvRepository.save(savedEntity);
         return dto;
     }
 
     @Override
-    public List<TvDto> findAllTvsByPersonExternalId(UUID personExternalId) {
-        List<TvEntity> findTvs = tvRepository.findAllTvByPersonExternalId(personExternalId);
+    public List<TvDto> findAllTvsByPersonExternalId(String personEmail) {
+        List<TvEntity> findTvs = tvRepository.findAllTvByPersonExternalId(personEmail);
         return findTvs.stream().map(entity -> mapper.map(entity,TvDto.class)).collect(Collectors.toList());
     }
 

@@ -31,14 +31,19 @@ public class TvEntity {
     private UUID externalId;
 
     @ManyToOne
-    @JoinColumn(nullable = false, name = "customer_person_id")
-    @Transient
+    @JoinColumn(nullable = false,name = "person_id")
     private PersonEntity personEntity;
 
     @OneToOne
-    @JoinColumn(nullable = false, name = "tv_category_id")
-    @Transient
+    @JoinColumn(nullable = false, name = "tv_category_external")
     private TvCategoryEntity tvCategoryEntityId;
+
+
+//    @JoinColumn(nullable = false, name = "person_external")
+//    private UUID personEntity;
+//
+//    @JoinColumn(nullable = false, name = "tv_category_external")
+//    private UUID tvCategoryEntityId;
 
     @Column(nullable = false)
     private String errorSeenByCustomer;
