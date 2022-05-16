@@ -32,10 +32,12 @@ public class TvEntity {
 
     @ManyToOne
     @JoinColumn(nullable = false, name = "customer_person_id")
+    @Transient
     private PersonEntity personEntity;
 
     @OneToOne
     @JoinColumn(nullable = false, name = "tv_category_id")
+    @Transient
     private TvCategoryEntity tvCategoryEntityId;
 
     @Column(nullable = false)

@@ -1,4 +1,4 @@
-package diploma.pgelektron.tvcategory.implementation;
+package diploma.pgelektron.tvcategory.service.implementation;
 
 import diploma.pgelektron.tvcategory.dto.converter.TvCategoryConverter;
 import diploma.pgelektron.tvcategory.dto.domain.TvCategoryDto;

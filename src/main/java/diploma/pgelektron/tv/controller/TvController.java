@@ -24,7 +24,7 @@ import static org.springframework.http.HttpStatus.*;
 public class TvController {
     private final TvService tvService;
 
-    @PostMapping("/create-new")
+    @PostMapping("/new")
     public ResponseEntity<TvDto> createNewTv(@RequestParam("personExternalId") UUID personExternalId,
                                              @RequestParam("tvCategoryDescription") String tvCategoryDescription,
                                              @RequestParam("errorSeenByCustomer") String errorSeenByCustomer

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class PersonConverter {
-    private final PersonService personService;
+
 
     public PersonEntity convertDtoToEntity(PersonDto dto) {
         if (dto == null) {
@@ -18,24 +18,23 @@ public class PersonConverter {
         }
 
         PersonEntity entity = new PersonEntity();
-        PersonEntity setEntity = personService.findPersonByExternalId(dto.getExternalId());
         entity.setExternalId(dto.getExternalId());
 
-        entity.setFirstName(setEntity.getFirstName());
-        entity.setLastName(setEntity.getLastName());
-        entity.setEmail(setEntity.getEmail());
-        entity.setUsername(setEntity.getUsername());
-        entity.setPassword(setEntity.getPassword());
-        entity.setAddress(setEntity.getAddress());
-        entity.setPhoneFix(setEntity.getPhoneFix());
-        entity.setPhoneMobile(setEntity.getPhoneMobile());
-        entity.setLastLoginDate(setEntity.getLastLoginDate());
-        entity.setLastLoginDateDisplay(setEntity.getLastLoginDateDisplay());
-        entity.setJoinDate(setEntity.getJoinDate());
-        entity.setRole(setEntity.getRole());
-        entity.setAuthorities(setEntity.getAuthorities());
-        entity.setActive(setEntity.isActive());
-        entity.setNotLocked(setEntity.isNotLocked());
+        entity.setFirstName(dto.getFirstName());
+        entity.setLastName(dto.getLastName());
+        entity.setEmail(dto.getEmail());
+        entity.setUsername(dto.getUsername());
+        entity.setPassword(dto.getPassword());
+        entity.setAddress(dto.getAddress());
+        entity.setPhoneFix(dto.getPhoneFix());
+        entity.setPhoneMobile(dto.getPhoneMobile());
+        entity.setLastLoginDate(dto.getLastLoginDate());
+        entity.setLastLoginDateDisplay(dto.getLastLoginDateDisplay());
+        entity.setJoinDate(dto.getJoinDate());
+        entity.setRole(dto.getRole());
+        entity.setAuthorities(dto.getAuthorities());
+        entity.setActive(dto.isActive());
+        entity.setNotLocked(dto.isNotLocked());
 
         return entity;
     }
@@ -47,23 +46,22 @@ public class PersonConverter {
         }
 
         PersonDto dto = new PersonDto();
-        PersonEntity getEntity = personService.findPersonByExternalId(entity.getExternalId());
         dto.setExternalId(entity.getExternalId());
-        dto.setFirstName(getEntity.getFirstName());
-        dto.setLastName(getEntity.getLastName());
-        dto.setEmail(getEntity.getEmail());
-        dto.setUsername(getEntity.getUsername());
-        dto.setPassword(getEntity.getPassword());
-        dto.setAddress(getEntity.getAddress());
-        dto.setPhoneFix(getEntity.getPhoneFix());
-        dto.setPhoneMobile(getEntity.getPhoneMobile());
-        dto.setLastLoginDate(getEntity.getLastLoginDate());
-        dto.setLastLoginDateDisplay(getEntity.getLastLoginDateDisplay());
-        dto.setJoinDate(getEntity.getJoinDate());
-        dto.setRole(getEntity.getRole());
-        dto.setAuthorities(getEntity.getAuthorities());
-        dto.setActive(getEntity.isActive());
-        dto.setNotLocked(getEntity.isNotLocked());
+        dto.setFirstName(entity.getFirstName());
+        dto.setLastName(entity.getLastName());
+        dto.setEmail(entity.getEmail());
+        dto.setUsername(entity.getUsername());
+        dto.setPassword(entity.getPassword());
+        dto.setAddress(entity.getAddress());
+        dto.setPhoneFix(entity.getPhoneFix());
+        dto.setPhoneMobile(entity.getPhoneMobile());
+        dto.setLastLoginDate(entity.getLastLoginDate());
+        dto.setLastLoginDateDisplay(entity.getLastLoginDateDisplay());
+        dto.setJoinDate(entity.getJoinDate());
+        dto.setRole(entity.getRole());
+        dto.setAuthorities(entity.getAuthorities());
+        dto.setActive(entity.isActive());
+        dto.setNotLocked(entity.isNotLocked());
 
         return dto;
     }

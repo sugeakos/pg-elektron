@@ -1,4 +1,4 @@
-package diploma.pgelektron.person.implementation;
+package diploma.pgelektron.person.service.implementation;
 
 import diploma.pgelektron.enumeration.Role;
 import diploma.pgelektron.exception.domain.EmailExistException;

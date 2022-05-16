@@ -1,16 +1,14 @@
 package diploma.pgelektron.tvcategory.controller;
 
-import com.sun.xml.bind.v2.runtime.reflect.Lister;
 import diploma.pgelektron.tvcategory.dto.converter.TvCategoryConverter;
 import diploma.pgelektron.tvcategory.dto.domain.TvCategoryDto;
-import diploma.pgelektron.tvcategory.implementation.TvCategoryServiceImpl;
+import diploma.pgelektron.tvcategory.service.implementation.TvCategoryServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.OK;

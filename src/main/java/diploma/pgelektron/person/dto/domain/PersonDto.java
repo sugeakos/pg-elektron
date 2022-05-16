@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.Transient;
 import java.util.Date;
 import java.util.UUID;
 
@@ -14,7 +15,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @Component
 public class PersonDto {
+    @Transient
     private UUID externalId;
+
     private String firstName;
     private String lastName;
     private String email;

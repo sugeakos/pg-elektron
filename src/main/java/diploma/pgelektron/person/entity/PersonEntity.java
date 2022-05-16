@@ -22,7 +22,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Table(name = "person")
-@Transactional
+
 public class PersonEntity implements Serializable {
     @Id
     @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1)
