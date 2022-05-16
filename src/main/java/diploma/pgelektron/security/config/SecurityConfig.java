@@ -1,6 +1,5 @@
 package diploma.pgelektron.security.config;
 
-import diploma.pgelektron.Person.PersonService;
 import diploma.pgelektron.constant.SecurityConstant;
 import diploma.pgelektron.filter.JwtAccessDeniedHandler;
 import diploma.pgelektron.filter.JwtAuthenticationEntryPoint;
