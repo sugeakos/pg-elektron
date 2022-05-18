@@ -26,7 +26,7 @@ public interface PersonService {
     List<PersonDto> getUsers();
     PersonEntity findPersonByUsername(String username);
     PersonEntity findPersonByEmail(String email);
-    PersonEntity addNewUser(String firstName,
+    PersonDto addNewUser(String firstName,
                             String lastName,
                             String username,
                             String email,
@@ -37,7 +37,7 @@ public interface PersonService {
                             boolean isNonLocked,
                             boolean isActive) throws UserNotFoundException, EmailExistException, UsernameExistException, IOException, MessagingException;
 
-    PersonEntity updateUser(String currentUsername,
+    PersonDto updateUser(String currentUsername,
                             String newFirstName,
                             String newLastName,
                             String newUsername,

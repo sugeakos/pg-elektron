@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -26,6 +27,7 @@ public class TvController {
     private final TvService tvService;
 
     @PostMapping("/new")
+    @PreAuthorize("hasAnyAuthority('tv:create')")
     public ResponseEntity<TvDto> createNewTv(@RequestParam("personExternalId") UUID personExternalId,
                                              @RequestParam("tvCategoryDescription") String tvCategoryDescription,
                                              @RequestParam("errorSeenByCustomer") String errorSeenByCustomer
@@ -37,6 +39,7 @@ public class TvController {
     }
 
     @GetMapping("/{personExternalId}")
+    @PreAuthorize("hasAnyAuthority('user:find')")
     public ResponseEntity<List<TvDto>> getAllTvByPerson(@PathVariable("personExternalId") String personExternalId) {
         List<TvDto> getTvs = tvService.findAllTvsByPersonExternalId(personExternalId);
         return new ResponseEntity<>(getTvs, OK);

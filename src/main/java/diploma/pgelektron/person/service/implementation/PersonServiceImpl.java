@@ -113,7 +113,7 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
 
 
     @Override
-    public PersonEntity addNewUser(String firstName,
+    public PersonDto addNewUser(String firstName,
                                    String lastName,
                                    String username,
                                    String email,
@@ -136,6 +136,7 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
         String tempPassword = generateRandomNewPassword();
         log.info("New password is: " + tempPassword);
         PersonEntity user = new PersonEntity();
+        user.setExternalId(generateNewExternalId());
         user.setFirstName(firstName);
         user.setLastName(lastName);
 
@@ -157,8 +158,9 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
         user.setRole(getRoleEnumName(role).name());
         user.setAuthorities(getRoleEnumName(role).getAuthorities());
         personRepository.save(user);
+        PersonDto returnUser = personConverter.convertEntityToDto(user);
         emailService.sendNewPasswordEmail(firstName, tempPassword, email);
-        return user;
+        return returnUser;
     }
 
     @Override
@@ -180,7 +182,7 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
 
 
     @Override
-    public PersonEntity updateUser(String currentUsername,
+    public PersonDto updateUser(String currentUsername,
                                    String newFirstName,
                                    String newLastName,
                                    String newUsername,
@@ -197,15 +199,15 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
         PersonEntity currentUser = validateNewUsernameAndEmail(currentUsername, newUsername, newEmail);
 
 
-        if (!newFirstName.equals("")) {
-            assert currentUser != null;
+        if (newFirstName.equals("")) {
+
             currentUser.setFirstName(currentUser.getFirstName());
         } else {
-            assert currentUser != null;
+
             currentUser.setFirstName(newFirstName);
         }
 
-        if (!newLastName.equals("")) {
+        if (newLastName.equals("")) {
             currentUser.setLastName(currentUser.getLastName());
         } else {
             currentUser.setLastName(newLastName);
@@ -224,24 +226,24 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
         }
 
 
-        if (!newPassword.equals("")) {
+        if (newPassword.equals("")) {
         } else {
             currentUser.setPassword(bCryptPasswordEncoder.encode(newPassword));
         }
 
-        if (!newPhoneFix.equals("")) {
+        if (newPhoneFix.equals("")) {
             currentUser.setPhoneFix(currentUser.getPhoneFix());
         } else {
             currentUser.setPhoneFix(newPhoneFix);
         }
 
-        if (!newPhoneMobile.equals("")) {
+        if (newPhoneMobile.equals("")) {
             currentUser.setPhoneFix(currentUser.getPhoneMobile());
         } else {
             currentUser.setPhoneMobile(newPhoneMobile);
         }
 
-        if (!newAddress.equals("")) {
+        if (newAddress.equals("")) {
             currentUser.setAddress(currentUser.getAddress());
         } else {
             currentUser.setAddress(newAddress);
@@ -257,8 +259,9 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
 
         log.info("Current username: " + currentUser.getUsername());
         personRepository.save(currentUser);
+        PersonDto returnCurrentUser = personConverter.convertEntityToDto(currentUser);
         saveProfileImage(currentUser, profileImage);
-        return currentUser;
+        return returnCurrentUser;
     }
 
     @Override

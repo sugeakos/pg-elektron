@@ -73,21 +73,23 @@ public class PersonController extends ExceptionHandling {
     }
 
     @GetMapping("/person/list")
+    @PreAuthorize("hasAnyAuthority('user:find')")
     public ResponseEntity<List<PersonDto>> listAllPersons() {
         List<PersonDto> personEntityList = personService.getUsers();
         return new ResponseEntity<>(personEntityList, OK);
     }
 
     @GetMapping("/person/{externalId}")
+    @PreAuthorize("hasAnyAuthority('user:find')")
     public ResponseEntity<PersonDto> getPersonByExternalId(@PathVariable("externalId") UUID externalId){
         PersonEntity getEntity = personService.findPersonByExternalId(externalId);
         return new ResponseEntity<>(personConverter.convertEntityToDto(getEntity),OK) ;
 
     }
 
-    @PostMapping("/add")
+    @PostMapping("/person/add")
     @PreAuthorize("hasAnyAuthority('user:create')")
-    public ResponseEntity<PersonEntity> addNewPerson(@Valid @RequestParam("firstName") String firstName,
+    public ResponseEntity<PersonDto> addNewPerson(@Valid @RequestParam("firstName") String firstName,
                                                      @Valid @RequestParam("lastName") String lastName,
                                                      @Valid @RequestParam(value = "username", required = false) String username,
                                                      @Valid @RequestParam("email") String email,
@@ -98,7 +100,7 @@ public class PersonController extends ExceptionHandling {
                                                      @Valid @RequestParam("isNonLocked") String isNonLocked,
                                                      @Valid @RequestParam("isActive") String isActive)
             throws UserNotFoundException, EmailExistException, MessagingException, IOException, UsernameExistException {
-        PersonEntity newPersonEntity =
+        PersonDto newPersonEntity =
                 personService.addNewUser(firstName,
                         lastName,
                         username,
@@ -113,8 +115,8 @@ public class PersonController extends ExceptionHandling {
 
     }
 
-    @PostMapping("/update")
-    public ResponseEntity<PersonEntity> updateUser(@RequestParam("currentUsername") String currentUsername,
+    @PostMapping("/person/update")
+    public ResponseEntity<PersonDto> updateUser(@RequestParam("currentUsername") String currentUsername,
                                                    @RequestParam(value = "firstName", required = false) String firstName,
                                                    @RequestParam(value = "lastName", required = false) String lastName,
                                                    @RequestParam(value = "username") String username,
@@ -129,14 +131,14 @@ public class PersonController extends ExceptionHandling {
                                                    @RequestParam(value = "profileImage", required = false) MultipartFile profileImage)
             throws UserNotFoundException, EmailExistException, IOException, UsernameExistException {
 
-        PersonEntity updatedPersonEntity = personService.updateUser(currentUsername,
+        PersonDto updatedPersonDto = personService.updateUser(currentUsername,
                 firstName, lastName, username, email, password,
                 phoneFix, phoneMobile, address, role,
                 Boolean.parseBoolean(isNonLocked), Boolean.parseBoolean(isActive), profileImage);
-        return new ResponseEntity<>(updatedPersonEntity, OK);
+        return new ResponseEntity<>(updatedPersonDto, OK);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/person/delete/{id}")
     @PreAuthorize("hasAnyAuthority('user:delete')")
     public ResponseEntity<HttpResponse> deleteUser(@PathVariable("id") UUID id) {
 
@@ -144,7 +146,7 @@ public class PersonController extends ExceptionHandling {
         return response(NO_CONTENT, USER_DELETED_SUCCESSFULLY);
     }
 
-    @GetMapping("/reset-password/{email}")
+    @GetMapping("/person/reset-password/{email}")
     public ResponseEntity<HttpResponse> resetPassword(@PathVariable("email") String email) throws EmailNotFoundException, MessagingException {
         personService.resetPassword(email);
         return response(OK, EMAIL_SENT + email);
@@ -154,7 +156,8 @@ public class PersonController extends ExceptionHandling {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
     }
 
-    @GetMapping("/find/{username}")
+    @GetMapping("/person/find/{username}")
+    @PreAuthorize("hasAnyAuthority('user:find')")
     public ResponseEntity<PersonEntity> getUser(@PathVariable("username") String username) {
         PersonEntity user = personService.findPersonByUsername(username);
         return new ResponseEntity<>(user, OK);
