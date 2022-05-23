@@ -46,26 +46,28 @@ public class TvServiceImpl implements TvService {
         return tvConverter.convertEntityToDto(entity);
     }
 
+
+
     @Override
-    public TvDto createNewTv(UUID personExternalId, String tvCategoryDescription,
+    public TvDto createNewTv(String email, String tvCategoryDescription,
                              String errorSeenByCustomer, Date reservedDateToRepair) {
         TvDto dto = new TvDto();
         dto.setExternalId(generateNewExternalId());
-        dto.setPersonDto(personConverter.convertEntityToDto(personService.findPersonByExternalId(personExternalId)));
-        dto.setTvCategoryDto(tvCategoryConverter.convertEntityToDto(tvCategoryService.getTvByDescription(tvCategoryDescription)));
+        dto.setPersonEmail(email);
+        dto.setTvCategoryDescription(tvCategoryDescription);
         dto.setErrorSeenByCustomer(errorSeenByCustomer);
         dto.setReservedDateToRepair(reservedDateToRepair);
         TvEntity savedEntity = tvConverter.convertDtoToEntity(dto);
         savedEntity.setItStillInProgress(true);
-        savedEntity.setPersonEntity(personService.findPersonByExternalId(personExternalId));
+        savedEntity.setPersonEntity(personService.findPersonByEmail(email));
         savedEntity.setTvCategoryEntityId(tvCategoryService.getTvByDescription(tvCategoryDescription));
         tvRepository.save(savedEntity);
         return dto;
     }
 
     @Override
-    public List<TvDto> findAllTvsByPersonExternalId(String personEmail) {
-        List<TvEntity> findTvs = tvRepository.findAllTvByPersonExternalId(personEmail);
+    public List<TvDto> findAllTvsByPersonEmail(String personEmail) {
+        List<TvEntity> findTvs = tvRepository.findAllTvByPersonEmail(personEmail);
         return findTvs.stream().map(entity -> mapper.map(entity,TvDto.class)).collect(Collectors.toList());
     }
 

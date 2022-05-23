@@ -1,6 +1,7 @@
 package diploma.pgelektron.person.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import diploma.pgelektron.utility.valiation.EmailValidation;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,7 @@ import java.util.UUID;
 @Table(name = "person")
 
 public class PersonEntity implements Serializable {
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Id
     @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
@@ -50,8 +52,9 @@ public class PersonEntity implements Serializable {
 
     private String username;
 
-//    @NotBlank
-//    @NotEmpty
+    //    @NotBlank
+    //@NotEmpty
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
 //    @NotBlank
@@ -61,14 +64,14 @@ public class PersonEntity implements Serializable {
 
     private String phoneFix;
 
-//    @NotBlank
+    //    @NotBlank
 //    @NotEmpty
 //    @Min(10)
 //    @Max(12)
 //    @PhoneNumberValidation
     private String phoneMobile;
 
-//    @NotBlank
+    //    @NotBlank
 //    @NotEmpty
 //    @Min(10)
 //    @Max(255)

@@ -1,5 +1,6 @@
 package diploma.pgelektron.tvcategory.service.implementation;
 
+import diploma.pgelektron.tv.entity.TvEntity;
 import diploma.pgelektron.tvcategory.dto.converter.TvCategoryConverter;
 import diploma.pgelektron.tvcategory.dto.domain.TvCategoryDto;
 import diploma.pgelektron.tvcategory.repository.TvCategoryRepository;
@@ -34,6 +35,11 @@ public class TvCategoryServiceImpl implements TvCategoryService {
     }
 
     @Override
+    public String findCategoryDescription(UUID externalCategoryId) {
+        return tvCategoryRepository.findDescriptionById(externalCategoryId);
+    }
+
+    @Override
     public List<TvCategoryEntity> getAllTvCategories() {
         return new ArrayList<>(tvCategoryRepository.findAll());
     }
@@ -46,19 +52,24 @@ public class TvCategoryServiceImpl implements TvCategoryService {
     @Override
     public List<TvCategoryDto> getAllTvCategoryDtos() {
         List<TvCategoryEntity> allCategories = getAllTvCategories();
-        List<TvCategoryDto> categoriesDto = allCategories.stream()
+        return allCategories.stream()
                 .map(category -> mapper.map(category, TvCategoryDto.class)).collect(Collectors.toList());
-        //categoriesDto;
-        return categoriesDto;
     }
 
     @Override
-    public TvCategoryDto saveTvCategoryDto(TvCategoryDto tvCategoryDto) {
-        TvCategoryEntity entity = tvCategoryConverter.convertDtoToEntity(tvCategoryDto);
-        entity.setExternalId(generateNewExternalId());
-        TvCategoryEntity savedEntity = tvCategoryRepository.save(entity);
+    public TvCategoryDto saveTvCategoryDto(String description) {
 
-        return tvCategoryConverter.convertEntityToDto(savedEntity);
+        TvCategoryEntity entity = new TvCategoryEntity();
+        entity.setExternalId(generateNewExternalId());
+        entity.setDescription(description);
+        tvCategoryRepository.save(entity);
+
+        return tvCategoryConverter.convertEntityToDto(entity);
+    }
+
+    @Override
+    public TvCategoryEntity findCategoryByDescription(String description) {
+        return tvCategoryRepository.findTvCategoryEntityByDescription(description);
     }
 
     public UUID generateNewExternalId(){

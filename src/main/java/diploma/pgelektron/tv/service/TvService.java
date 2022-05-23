@@ -14,7 +14,7 @@ import java.util.UUID;
 public interface TvService {
     TvDto saveTv(TvDto dto);
     TvDto getTvById(UUID id);
-    TvDto createNewTv(UUID personExternalId, String tvCategoryDescription, String errorSeenByCustomer, Date reservedDateToRepair);
-    List<TvDto> findAllTvsByPersonExternalId(String personEmail);
+    TvDto createNewTv(String email, String tvCategoryDescription, String errorSeenByCustomer, Date reservedDateToRepair);
+    List<TvDto> findAllTvsByPersonEmail(String personEmail);
     List<TvDto> listAllTv();
 }

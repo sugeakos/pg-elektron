@@ -28,21 +28,26 @@ public class TvController {
 
     @PostMapping("/new")
     @PreAuthorize("hasAnyAuthority('tv:create')")
-    public ResponseEntity<TvDto> createNewTv(@RequestParam("personExternalId") UUID personExternalId,
+    public ResponseEntity<TvDto> createNewTv(@RequestParam("personEmail") String personEmail,
                                              @RequestParam("tvCategoryDescription") String tvCategoryDescription,
                                              @RequestParam("errorSeenByCustomer") String errorSeenByCustomer
 //                                             @RequestParam("reservedDateToRepair")Date reservedDateToRepair
                                              ) {
-        TvDto newDto =  tvService.createNewTv(personExternalId, tvCategoryDescription,
+        TvDto newDto =  tvService.createNewTv(personEmail, tvCategoryDescription,
                 errorSeenByCustomer, new Date());
         return new ResponseEntity<>(newDto, OK);
     }
 
-    @GetMapping("/{personExternalId}")
-    @PreAuthorize("hasAnyAuthority('user:find')")
-    public ResponseEntity<List<TvDto>> getAllTvByPerson(@PathVariable("personExternalId") String personExternalId) {
-        List<TvDto> getTvs = tvService.findAllTvsByPersonExternalId(personExternalId);
+    @GetMapping("/{personEmail}")
+    public ResponseEntity<List<TvDto>> getAllTvByPerson(@PathVariable("personEmail") String personEmail) {
+        List<TvDto> getTvs = tvService.findAllTvsByPersonEmail(personEmail);
         return new ResponseEntity<>(getTvs, OK);
     }
 
+    @GetMapping("/all-tv")
+    @PreAuthorize("hasAnyAuthority('user:find')")
+    public ResponseEntity<List<TvDto>> getAllTv() {
+        List<TvDto> tvDtos = tvService.listAllTv();
+        return new ResponseEntity<>(tvDtos, OK);
+    }
 }

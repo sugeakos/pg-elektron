@@ -21,8 +21,8 @@ import java.util.UUID;
 public class TvDto {
     private UUID externalId;
 
-    private PersonDto personDto;
-    private TvCategoryDto tvCategoryDto;
+    private String personEmail;
+    private String tvCategoryDescription;
 
     private String errorSeenByCustomer;
 

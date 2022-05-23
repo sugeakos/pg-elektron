@@ -1,9 +1,11 @@
 package diploma.pgelektron.tv.dto.converter;
 
 import diploma.pgelektron.person.dto.converter.PersonConverter;
+import diploma.pgelektron.person.service.PersonService;
 import diploma.pgelektron.tv.dto.domain.TvDto;
 import diploma.pgelektron.tv.entity.TvEntity;
 import diploma.pgelektron.tvcategory.dto.converter.TvCategoryConverter;
+import diploma.pgelektron.tvcategory.service.TvCategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +14,9 @@ import org.springframework.stereotype.Component;
 public class TvConverter {
     private final PersonConverter personConverter;
     private final TvCategoryConverter tvCategoryConverter;
+    private final TvCategoryService tvCategoryService;
+    private final PersonService personService;
+
 
     public TvEntity convertDtoToEntity(TvDto dto) {
         if (dto == null) {
@@ -20,8 +25,8 @@ public class TvConverter {
 
         TvEntity entity = new TvEntity();
         entity.setExternalId(dto.getExternalId());
-        entity.setPersonEntity(personConverter.convertDtoToEntity(dto.getPersonDto()));
-        entity.setTvCategoryEntityId(tvCategoryConverter.convertDtoToEntity(dto.getTvCategoryDto()));
+        entity.setPersonEntity(personService.findPersonByEmail(dto.getPersonEmail()));
+        entity.setTvCategoryEntityId(tvCategoryService.getTvByDescription(dto.getTvCategoryDescription()));
         entity.setErrorSeenByCustomer(dto.getErrorSeenByCustomer());
         entity.setReservedDateToRepair(dto.getReservedDateToRepair());
         entity.setDateOfCorrection(dto.getDateOfCorrection());
@@ -37,8 +42,8 @@ public class TvConverter {
         }
         TvDto dto = new TvDto();
         dto.setExternalId(entity.getExternalId());
-        dto.setPersonDto(personConverter.convertEntityToDto(entity.getPersonEntity()));
-        dto.setTvCategoryDto(tvCategoryConverter.convertEntityToDto(entity.getTvCategoryEntityId()));
+        dto.setPersonEmail(entity.getPersonEntity().getEmail());
+        dto.setTvCategoryDescription(tvCategoryService.findCategoryDescription(entity.getExternalId()));
         dto.setErrorSeenByCustomer(entity.getErrorSeenByCustomer());
         dto.setReservedDateToRepair(entity.getReservedDateToRepair());
         dto.setDateOfCorrection(entity.getDateOfCorrection());
