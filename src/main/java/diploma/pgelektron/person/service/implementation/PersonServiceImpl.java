@@ -193,8 +193,7 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
                                    String newAddress,
                                    String role,
                                    boolean isNonLocked,
-                                   boolean isActive,
-                                   MultipartFile profileImage)
+                                   boolean isActive)
             throws UserNotFoundException, EmailExistException, UsernameExistException, IOException {
         PersonEntity currentUser = validateNewUsernameAndEmail(currentUsername, newUsername, newEmail);
 
@@ -259,9 +258,7 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
 
         log.info("Current username: " + currentUser.getUsername());
         personRepository.save(currentUser);
-        PersonDto returnCurrentUser = personConverter.convertEntityToDto(currentUser);
-        saveProfileImage(currentUser, profileImage);
-        return returnCurrentUser;
+        return personConverter.convertEntityToDto(currentUser);
     }
 
     @Override

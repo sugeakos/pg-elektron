@@ -13,6 +13,7 @@ import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
@@ -48,7 +49,7 @@ public class TvEntity {
     @Column(nullable = false)
     private String errorSeenByCustomer;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "CET")
     private Date reservedDateToRepair;
 

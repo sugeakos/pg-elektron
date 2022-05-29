@@ -7,6 +7,7 @@ import diploma.pgelektron.tv.entity.TvEntity;
 import diploma.pgelektron.tvcategory.dto.domain.TvCategoryDto;
 import diploma.pgelektron.tvcategory.entity.TvCategoryEntity;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -14,7 +15,8 @@ import java.util.UUID;
 public interface TvService {
     TvDto saveTv(TvDto dto);
     TvDto getTvById(UUID id);
-    TvDto createNewTv(String email, String tvCategoryDescription, String errorSeenByCustomer, Date reservedDateToRepair);
+    TvDto createNewTv(String email, String tvCategoryDescription, String errorSeenByCustomer, String reservedDateToRepair) throws ParseException;
     List<TvDto> findAllTvsByPersonEmail(String personEmail);
     List<TvDto> listAllTv();
+    TvDto updateTv(UUID externalTvId, String errorSeenByCustomer, String reservedDateToRepair) throws ParseException;
 }

@@ -14,6 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -30,11 +31,11 @@ public class TvController {
     @PreAuthorize("hasAnyAuthority('tv:create')")
     public ResponseEntity<TvDto> createNewTv(@RequestParam("personEmail") String personEmail,
                                              @RequestParam("tvCategoryDescription") String tvCategoryDescription,
-                                             @RequestParam("errorSeenByCustomer") String errorSeenByCustomer
-//                                             @RequestParam("reservedDateToRepair")Date reservedDateToRepair
-                                             ) {
+                                             @RequestParam("errorSeenByCustomer") String errorSeenByCustomer,
+                                             @RequestParam("reservedDateToRepair")String reservedDateToRepair
+                                             ) throws ParseException {
         TvDto newDto =  tvService.createNewTv(personEmail, tvCategoryDescription,
-                errorSeenByCustomer, new Date());
+                errorSeenByCustomer, reservedDateToRepair);
         return new ResponseEntity<>(newDto, OK);
     }
 
@@ -49,5 +50,13 @@ public class TvController {
     public ResponseEntity<List<TvDto>> getAllTv() {
         List<TvDto> tvDtos = tvService.listAllTv();
         return new ResponseEntity<>(tvDtos, OK);
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<TvDto> updateTv(@RequestParam("externalTvId") UUID externalTvId,
+                                          @RequestParam("errorSeenByCustomer") String errorSeenByCustomer,
+                                          @RequestParam(value = "reservedDateToRepair", required = false) String reservedDateToRepair) throws ParseException {
+        TvDto returnDto = tvService.updateTv(externalTvId,errorSeenByCustomer,reservedDateToRepair);
+        return new ResponseEntity<>(returnDto,OK);
     }
 }

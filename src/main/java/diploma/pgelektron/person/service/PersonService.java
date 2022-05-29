@@ -48,8 +48,7 @@ public interface PersonService {
                             String address,
                             String role,
                             boolean isNonLocked,
-                            boolean isActive,
-                            MultipartFile profileImage) throws UserNotFoundException, EmailExistException, UsernameExistException, IOException;
+                            boolean isActive) throws UserNotFoundException, EmailExistException, UsernameExistException, IOException;
 
     void deleteUser(UUID id);
     void resetPassword(String email) throws EmailNotFoundException, MessagingException;

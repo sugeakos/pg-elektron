@@ -73,7 +73,7 @@ public class PersonController extends ExceptionHandling {
     }
 
     @GetMapping("/person/list")
-    @PreAuthorize("hasAnyAuthority('user:find')")
+    //@PreAuthorize("hasAnyAuthority('user:find')")
     public ResponseEntity<List<PersonDto>> listAllPersons() {
         List<PersonDto> personEntityList = personService.getUsers();
         return new ResponseEntity<>(personEntityList, OK);
@@ -127,14 +127,15 @@ public class PersonController extends ExceptionHandling {
                                                    @RequestParam(value = "address", required = false) String address,
                                                    @RequestParam(value = "role", required = false) String role,
                                                    @RequestParam(value = "isActive", required = false) String isActive,
-                                                   @RequestParam(value = "isNonLocked", required = false) String isNonLocked,
-                                                   @RequestParam(value = "profileImage", required = false) MultipartFile profileImage)
+                                                   @RequestParam(value = "isNonLocked", required = false) String isNonLocked
+    //                                               @RequestParam(value = "profileImage", required = false) MultipartFile profileImage
+                                                                                               )
             throws UserNotFoundException, EmailExistException, IOException, UsernameExistException {
 
         PersonDto updatedPersonDto = personService.updateUser(currentUsername,
                 firstName, lastName, username, email, password,
                 phoneFix, phoneMobile, address, role,
-                Boolean.parseBoolean(isNonLocked), Boolean.parseBoolean(isActive), profileImage);
+                Boolean.parseBoolean(isNonLocked), Boolean.parseBoolean(isActive));
         return new ResponseEntity<>(updatedPersonDto, OK);
     }
 
