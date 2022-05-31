@@ -53,10 +53,11 @@ public class TvController {
     }
 
     @PostMapping("/update")
+    @PreAuthorize("hasAnyAuthority('tv:delete')")
     public ResponseEntity<TvDto> updateTv(@RequestParam("externalTvId") UUID externalTvId,
-                                          @RequestParam("errorSeenByCustomer") String errorSeenByCustomer,
-                                          @RequestParam(value = "reservedDateToRepair", required = false) String reservedDateToRepair) throws ParseException {
-        TvDto returnDto = tvService.updateTv(externalTvId,errorSeenByCustomer,reservedDateToRepair);
+                                          @RequestParam("repairedError") String repairedError,
+                                          @RequestParam(value = "price") String price) throws ParseException {
+        TvDto returnDto = tvService.updateTv(externalTvId,repairedError,price);
         return new ResponseEntity<>(returnDto,OK);
     }
 }

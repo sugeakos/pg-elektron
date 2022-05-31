@@ -90,11 +90,21 @@ public class TvServiceImpl implements TvService {
     }
 
     @Override
-    public TvDto updateTv(UUID externalTvId, String errorSeenByCustomer, String reservedDateToRepair) throws ParseException {
-        //LocalDateTime newDate = LocalDateTime.parse(reservedDateToRepair, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        Date newDate = DateUtils.parseDate(reservedDateToRepair,"yyyy-MM-dd");
+    public TvDto updateTv(UUID externalTvId, String repairedError, String price) throws ParseException {
         TvEntity entity = tvRepository.findTvEntityByExternalId(externalTvId);
-        entity.setErrorSeenByCustomer(errorSeenByCustomer);
+        Long newPrice = Long.parseLong(price);
+        entity.setRepairedError(repairedError);
+        entity.setDateOfCorrection(new Date());
+        entity.setPrice(newPrice);
+        entity.setItStillInProgress(false);
+        tvRepository.save(entity);
+        return tvConverter.convertEntityToDto(entity);
+    }
+
+    @Override
+    public TvDto updateTvReservedDate(UUID externalId, String reservedDateToRepair) throws ParseException {
+        Date newDate = DateUtils.parseDate(reservedDateToRepair,"yyyy-MM-dd");
+        TvEntity entity = tvRepository.findTvEntityByExternalId(externalId);
         entity.setReservedDateToRepair(newDate);
         tvRepository.save(entity);
         return tvConverter.convertEntityToDto(entity);

@@ -159,7 +159,7 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
         user.setAuthorities(getRoleEnumName(role).getAuthorities());
         personRepository.save(user);
         PersonDto returnUser = personConverter.convertEntityToDto(user);
-        emailService.sendNewPasswordEmail(firstName, tempPassword, email);
+        emailService.sendNewPasswordEmail(firstName, tempPassword, email, user.getUsername());
         return returnUser;
     }
 
@@ -277,7 +277,7 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
         user.setPassword(bCryptPasswordEncoder.encode(password));
         PersonEntity savedUser = personConverter.convertDtoToEntity(user);
         personRepository.save(savedUser);
-        emailService.sendNewPasswordEmail(user.getFirstName(), password, user.getEmail());
+        emailService.sendNewPasswordEmail(user.getFirstName(), password, user.getEmail(), user.getUsername());
     }
 
     @Override
