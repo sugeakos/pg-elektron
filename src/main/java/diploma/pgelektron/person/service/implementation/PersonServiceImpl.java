@@ -13,12 +13,15 @@ import diploma.pgelektron.person.entity.PersonEntity;
 import diploma.pgelektron.person.service.PersonService;
 import diploma.pgelektron.service.EmailService;
 import diploma.pgelektron.service.LoginAttemptService;
-import diploma.pgelektron.tvcategory.dto.domain.TvCategoryDto;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import org.springframework.data.domain.Sort;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -29,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.mail.MessagingException;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -159,13 +163,13 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
         user.setAuthorities(getRoleEnumName(role).getAuthorities());
         personRepository.save(user);
         PersonDto returnUser = personConverter.convertEntityToDto(user);
-        emailService.sendNewPasswordEmail(firstName, tempPassword, email, user.getUsername());
+        emailService.sendNewPasswordEmail(firstName, tempPassword, email);
         return returnUser;
     }
 
     @Override
     public List<PersonDto> getUsers() {
-        List<PersonEntity> entityList = personRepository.findAll();
+        List<PersonEntity> entityList = personRepository.findAll(Sort.by("lastName").ascending());
         return entityList.stream()
                 .map(entity -> mapper.map(entity, PersonDto.class)).collect(Collectors.toList());
     }
@@ -269,15 +273,15 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
 
     @Override
     public void resetPassword(String email) throws EmailNotFoundException, MessagingException {
-        PersonDto user = personConverter.convertEntityToDto(personRepository.findPersonByEmail(email)) ;
+        PersonEntity  user = personRepository.findPersonByEmail(email) ;
         if (user == null) {
             throw new EmailNotFoundException(NO_USER_FOUND_BY_EMAIL + email);
         }
         String password = generateRandomNewPassword();
+        log.info(password);
         user.setPassword(bCryptPasswordEncoder.encode(password));
-        PersonEntity savedUser = personConverter.convertDtoToEntity(user);
-        personRepository.save(savedUser);
-        emailService.sendNewPasswordEmail(user.getFirstName(), password, user.getEmail(), user.getUsername());
+        personRepository.save(user);
+        emailService.sendNewPasswordEmail(user.getFirstName(), password, user.getEmail());
     }
 
     @Override
@@ -292,6 +296,11 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
     public PersonEntity findPersonByExternalId(UUID externalId) {
         return personRepository.findPersonEntityByExternalId(externalId);
     }
+
+//    @Override
+//    public Page<PersonEntity> getAllPersonsByPage(java.awt.print.Pageable pageable) {
+//        return personRepository.findAll((Pageable) pageable);
+//    }
 
     private void validateLoginAttempt(PersonEntity user) {
         if (user.isNotLocked()) {

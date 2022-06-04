@@ -47,34 +47,36 @@ public class PersonEntity implements Serializable {
     @NotNull
     @NotBlank
     @NotEmpty
-    @EmailValidation
+    @Email
     private String email;
 
+    @NotNull
+    @NotBlank
+    @NotEmpty
     private String username;
 
-    //    @NotBlank
-    //@NotEmpty
+    @NotBlank
+    @NotEmpty
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
-//    @NotBlank
-//    @NotEmpty
-//    @Min(10)
-//    @Max(12)
+    @NotBlank
+    @NotEmpty
+    @Min(10)
+    @Max(12)
 
     private String phoneFix;
 
-    //    @NotBlank
-//    @NotEmpty
-//    @Min(10)
-//    @Max(12)
-//    @PhoneNumberValidation
+    @NotBlank
+    @NotEmpty
+    @Min(10)
+    @Max(12)
     private String phoneMobile;
 
-    //    @NotBlank
-//    @NotEmpty
-//    @Min(10)
-//    @Max(255)
+    @NotBlank
+    @NotEmpty
+    @Min(10)
+    @Max(255)
     private String address;
 
 

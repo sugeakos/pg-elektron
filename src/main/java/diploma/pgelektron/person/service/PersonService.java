@@ -6,9 +6,11 @@ import diploma.pgelektron.exception.domain.UserNotFoundException;
 import diploma.pgelektron.exception.domain.UsernameExistException;
 import diploma.pgelektron.person.dto.domain.PersonDto;
 import diploma.pgelektron.person.entity.PersonEntity;
+import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
+import java.awt.print.Pageable;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
@@ -54,6 +56,6 @@ public interface PersonService {
     void resetPassword(String email) throws EmailNotFoundException, MessagingException;
 
     PersonEntity findPersonByExternalId(UUID externalId);
+//    Page<PersonEntity> getAllPersonsByPage(Pageable pageable);
     PersonEntity updateProfileImage(String username, MultipartFile profileImage) throws UserNotFoundException, EmailExistException, UsernameExistException, IOException;
-
 }

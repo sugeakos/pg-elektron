@@ -6,6 +6,8 @@ import lombok.Setter;
 import org.apache.commons.lang3.RandomUtils;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.util.UUID;
 
 @Getter
@@ -21,5 +23,7 @@ public class TvCategoryEntity {
 
     private UUID externalId;
 
+    @NotEmpty
+    @NotBlank
     private String description;
 }

@@ -47,6 +47,8 @@ public class TvEntity {
 //    private UUID tvCategoryEntityId;
 
     @Column(nullable = false)
+    @NotEmpty
+    @NotBlank
     private String errorSeenByCustomer;
 
     @Column(nullable = true)

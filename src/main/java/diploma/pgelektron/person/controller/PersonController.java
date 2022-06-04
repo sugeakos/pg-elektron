@@ -14,18 +14,22 @@ import diploma.pgelektron.person.service.PersonService;
 import diploma.pgelektron.utility.token.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.security.RolesAllowed;
 import javax.mail.MessagingException;
 import javax.validation.Valid;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
@@ -41,6 +45,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RequestMapping("/api/v1")
 @Validated
 @RequiredArgsConstructor
+@EnableMethodSecurity
 public class PersonController extends ExceptionHandling {
     private final PersonService personService;
     private final AuthenticationManager authenticationManager;
@@ -72,33 +77,34 @@ public class PersonController extends ExceptionHandling {
         return new ResponseEntity<>(returnUser, jwtHeader, OK);
     }
 
+    @RolesAllowed({"ROLE_ADMIN, ROLE_SUPER_ADMIN"})
     @GetMapping("/person/list")
-    //@PreAuthorize("hasAnyAuthority('user:find')")
     public ResponseEntity<List<PersonDto>> listAllPersons() {
         List<PersonDto> personEntityList = personService.getUsers();
         return new ResponseEntity<>(personEntityList, OK);
     }
 
+    @RolesAllowed({"ROLE_ADMIN, ROLE_SUPER_ADMIN"})
     @GetMapping("/person/{externalId}")
-    @PreAuthorize("hasAnyAuthority('user:find')")
-    public ResponseEntity<PersonDto> getPersonByExternalId(@PathVariable("externalId") UUID externalId){
+
+    public ResponseEntity<PersonDto> getPersonByExternalId(@PathVariable("externalId") UUID externalId) {
         PersonEntity getEntity = personService.findPersonByExternalId(externalId);
-        return new ResponseEntity<>(personConverter.convertEntityToDto(getEntity),OK) ;
+        return new ResponseEntity<>(personConverter.convertEntityToDto(getEntity), OK);
 
     }
 
+    @RolesAllowed({"ROLE_ADMIN, ROLE_SUPER_ADMIN"})
     @PostMapping("/person/add")
-    @PreAuthorize("hasAnyAuthority('user:create')")
     public ResponseEntity<PersonDto> addNewPerson(@Valid @RequestParam("firstName") String firstName,
-                                                     @Valid @RequestParam("lastName") String lastName,
-                                                     @Valid @RequestParam(value = "username", required = false) String username,
-                                                     @Valid @RequestParam("email") String email,
-                                                     @Valid @RequestParam("phoneFix") String phoneFix,
-                                                     @Valid @RequestParam("phoneMobile") String phoneMobile,
-                                                     @Valid @RequestParam("address") String address,
-                                                     @Valid @RequestParam("role") String role,
-                                                     @Valid @RequestParam("isNonLocked") String isNonLocked,
-                                                     @Valid @RequestParam("isActive") String isActive)
+                                                  @Valid @RequestParam("lastName") String lastName,
+                                                  @Valid @RequestParam(value = "username", required = false) String username,
+                                                  @Valid @RequestParam("email") String email,
+                                                  @Valid @RequestParam("phoneFix") String phoneFix,
+                                                  @Valid @RequestParam("phoneMobile") String phoneMobile,
+                                                  @Valid @RequestParam("address") String address,
+                                                  @Valid @RequestParam("role") String role,
+                                                  @Valid @RequestParam("isNonLocked") String isNonLocked,
+                                                  @Valid @RequestParam("isActive") String isActive)
             throws UserNotFoundException, EmailExistException, MessagingException, IOException, UsernameExistException {
         PersonDto newPersonEntity =
                 personService.addNewUser(firstName,
@@ -117,19 +123,19 @@ public class PersonController extends ExceptionHandling {
 
     @PostMapping("/person/update")
     public ResponseEntity<PersonDto> updateUser(@RequestParam("currentUsername") String currentUsername,
-                                                   @RequestParam(value = "firstName", required = false) String firstName,
-                                                   @RequestParam(value = "lastName", required = false) String lastName,
-                                                   @RequestParam(value = "username") String username,
-                                                   @RequestParam(value = "email") String email,
-                                                   @RequestParam(value = "password", required = false) String password,
-                                                   @RequestParam(value = "phoneFix", required = false) String phoneFix,
-                                                   @RequestParam(value = "phoneMobile", required = false) String phoneMobile,
-                                                   @RequestParam(value = "address", required = false) String address,
-                                                   @RequestParam(value = "role", required = false) String role,
-                                                   @RequestParam(value = "isActive", required = false) String isActive,
-                                                   @RequestParam(value = "isNonLocked", required = false) String isNonLocked
-    //                                               @RequestParam(value = "profileImage", required = false) MultipartFile profileImage
-                                                                                               )
+                                                @RequestParam(value = "firstName", required = false) String firstName,
+                                                @RequestParam(value = "lastName", required = false) String lastName,
+                                                @RequestParam(value = "username") String username,
+                                                @RequestParam(value = "email") String email,
+                                                @RequestParam(value = "password", required = false) String password,
+                                                @RequestParam(value = "phoneFix", required = false) String phoneFix,
+                                                @RequestParam(value = "phoneMobile", required = false) String phoneMobile,
+                                                @RequestParam(value = "address", required = false) String address,
+                                                @RequestParam(value = "role", required = false) String role,
+                                                @RequestParam(value = "isActive", required = false) String isActive,
+                                                @RequestParam(value = "isNonLocked", required = false) String isNonLocked
+                                                //                                               @RequestParam(value = "profileImage", required = false) MultipartFile profileImage
+    )
             throws UserNotFoundException, EmailExistException, IOException, UsernameExistException {
 
         PersonDto updatedPersonDto = personService.updateUser(currentUsername,
@@ -139,12 +145,12 @@ public class PersonController extends ExceptionHandling {
         return new ResponseEntity<>(updatedPersonDto, OK);
     }
 
+    @RolesAllowed({"ROLE_ADMIN, ROLE_SUPER_ADMIN"})
     @DeleteMapping("/person/delete/{id}")
-    @PreAuthorize("hasAnyAuthority('user:delete')")
     public ResponseEntity<HttpResponse> deleteUser(@PathVariable("id") UUID id) {
 
         personService.deleteUser(id);
-        return response(NO_CONTENT, USER_DELETED_SUCCESSFULLY);
+        return response(OK, USER_DELETED_SUCCESSFULLY);
     }
 
     @GetMapping("/person/reset-password/{email}")
@@ -153,12 +159,19 @@ public class PersonController extends ExceptionHandling {
         return response(OK, EMAIL_SENT + email);
     }
 
+//    @GetMapping("/person/page")
+//    public ResponseEntity<Page<PersonEntity>> getAllPersonsInPage(@PathParam("page") int page) {
+//        Pageable pageable = (Pageable) PageRequest.of(page,3);
+//        return new ResponseEntity<>(personService.getAllPersonsByPage((java.awt.print.Pageable) pageable),OK);
+//    }
+
     private void authenticate(String username, String password) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
     }
 
+    @RolesAllowed({"ROLE_ADMIN, ROLE_SUPER_ADMIN"})
     @GetMapping("/person/find/{username}")
-    @PreAuthorize("hasAnyAuthority('user:find')")
+
     public ResponseEntity<PersonEntity> getUser(@PathVariable("username") String username) {
         PersonEntity user = personService.findPersonByUsername(username);
         return new ResponseEntity<>(user, OK);

@@ -9,6 +9,7 @@ import diploma.pgelektron.tvcategory.service.TvCategoryService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -51,7 +52,7 @@ public class TvCategoryServiceImpl implements TvCategoryService {
 
     @Override
     public List<TvCategoryDto> getAllTvCategoryDtos() {
-        List<TvCategoryEntity> allCategories = getAllTvCategories();
+        List<TvCategoryEntity> allCategories = tvCategoryRepository.findAll(Sort.by("description").ascending());
         return allCategories.stream()
                 .map(category -> mapper.map(category, TvCategoryDto.class)).collect(Collectors.toList());
     }

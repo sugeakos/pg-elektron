@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import java.net.URI;
 import java.text.ParseException;
@@ -45,15 +46,15 @@ public class TvController {
         return new ResponseEntity<>(getTvs, OK);
     }
 
+    @RolesAllowed({"ROLE_ADMIN, ROLE_SUPER_ADMIN"})
     @GetMapping("/all-tv")
-    @PreAuthorize("hasAnyAuthority('user:find')")
     public ResponseEntity<List<TvDto>> getAllTv() {
         List<TvDto> tvDtos = tvService.listAllTv();
         return new ResponseEntity<>(tvDtos, OK);
     }
 
+    @RolesAllowed({"ROLE_ADMIN, ROLE_SUPER_ADMIN"})
     @PostMapping("/update")
-    @PreAuthorize("hasAnyAuthority('tv:delete')")
     public ResponseEntity<TvDto> updateTv(@RequestParam("externalTvId") UUID externalTvId,
                                           @RequestParam("repairedError") String repairedError,
                                           @RequestParam(value = "price") String price) throws ParseException {
