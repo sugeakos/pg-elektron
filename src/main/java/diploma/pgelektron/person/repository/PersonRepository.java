@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.UUID;
 
 public interface PersonRepository extends JpaRepository<PersonEntity, Long>, PagingAndSortingRepository<PersonEntity,Long> {
-    PersonEntity findPersonByEmail(String email);
-    PersonEntity findPersonByUsername(String username);
+    PersonEntity findPersonEntityByEmail(String email);
+    PersonEntity findPersonEntityByUsername(String username);
     PersonEntity findPersonEntityByExternalId(UUID externalId);
 
     @Query(value ="Select * from person order by first_name desc" ,nativeQuery = true)

@@ -77,7 +77,7 @@ public class JwtTokenProvider {
     private JWTVerifier getJwtVerifier() {
         JWTVerifier verifier;
         try {
-            Algorithm algorithm = Algorithm.HMAC512(secret);
+            Algorithm algorithm = Algorithm.HMAC512(secret.getBytes());
             verifier = JWT.require(algorithm).withIssuer(PG_ELEKTRON_DOO).build();
 
         } catch (JWTVerificationException exception) {

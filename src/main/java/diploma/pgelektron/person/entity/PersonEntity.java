@@ -23,7 +23,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Table(name = "person")
-
+@Transactional
 public class PersonEntity implements Serializable {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Id
@@ -35,22 +35,21 @@ public class PersonEntity implements Serializable {
     @Unique
     private UUID externalId;
     @NotEmpty
-    @NotNull
     @NotBlank
     private String firstName;
 
-    @NotNull
+
     @NotBlank
     @NotEmpty
     private String lastName;
 
-    @NotNull
+
     @NotBlank
     @NotEmpty
     @Email
     private String email;
 
-    @NotNull
+
     @NotBlank
     @NotEmpty
     private String username;
@@ -62,21 +61,17 @@ public class PersonEntity implements Serializable {
 
     @NotBlank
     @NotEmpty
-    @Min(10)
-    @Max(12)
-
+    @Size(min = 6, max = 12)
     private String phoneFix;
 
     @NotBlank
     @NotEmpty
-    @Min(10)
-    @Max(12)
+    @Size(min = 10, max = 12)
     private String phoneMobile;
 
     @NotBlank
     @NotEmpty
-    @Min(10)
-    @Max(255)
+    @Size(min = 10, max = 255)
     private String address;
 
 

@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.Transient;
+import javax.validation.constraints.*;
 import java.util.Date;
 import java.util.UUID;
 
@@ -20,16 +21,24 @@ public class PersonDto {
     private UUID externalId;
 
     private String firstName;
+
     private String lastName;
+
     private String email;
+
     private String username;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
-    private String address;
     private String phoneFix;
+
+
     private String phoneMobile;
+
+
+    private String address;
+
     private String profileImageUrl;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "CET")

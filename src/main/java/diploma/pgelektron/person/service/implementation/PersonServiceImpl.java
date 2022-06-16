@@ -68,7 +68,7 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        PersonEntity user = personRepository.findPersonByUsername(username);
+        PersonEntity user = personRepository.findPersonEntityByUsername(username);
         if (user == null) {
             log.error("User not found by username: " + username);
             throw new UsernameNotFoundException("User not found by username: " + username);
@@ -76,9 +76,20 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
             validateLoginAttempt(user);
             user.setLastLoginDateDisplay(user.getLastLoginDate());
             user.setLastLoginDate(new Date());
+            user.setFirstName(user.getFirstName());
+            user.setLastName(user.getLastName());
+            user.setEmail(user.getEmail());
+            user.setPhoneFix(user.getPhoneFix());
+            user.setPhoneMobile(user.getPhoneMobile());
+            user.setAddress(user.getAddress());
+            user.setJoinDate(user.getJoinDate());
+            user.setActive(user.isActive());
+            user.setNotLocked(user.isNotLocked());
+            user.setRole(getRoleEnumName(user.getRole().toUpperCase()).name());
+            user.setAuthorities(getRoleEnumName(user.getRole().toUpperCase()).getAuthorities());
             personRepository.save(user);
             PersonPrincipal personPrincipal = new PersonPrincipal(user);
-            log.info("User not found by username: " + username);
+            log.info("User found by username: " + username);
             return personPrincipal;
         }
     }
@@ -176,12 +187,12 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
 
     @Override
     public PersonEntity findPersonByUsername(String username) {
-        return personRepository.findPersonByUsername(username);
+        return personRepository.findPersonEntityByUsername(username);
     }
 
     @Override
     public PersonEntity findPersonByEmail(String email) {
-        return personRepository.findPersonByEmail(email);
+        return personRepository.findPersonEntityByEmail(email);
     }
 
 
@@ -273,7 +284,7 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
 
     @Override
     public void resetPassword(String email) throws EmailNotFoundException, MessagingException {
-        PersonEntity  user = personRepository.findPersonByEmail(email) ;
+        PersonEntity  user = personRepository.findPersonEntityByEmail(email) ;
         if (user == null) {
             throw new EmailNotFoundException(NO_USER_FOUND_BY_EMAIL + email);
         }

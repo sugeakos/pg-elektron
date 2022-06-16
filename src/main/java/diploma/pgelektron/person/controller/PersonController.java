@@ -28,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.security.RolesAllowed;
 import javax.mail.MessagingException;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import java.io.IOException;
@@ -46,6 +47,7 @@ import static org.springframework.http.HttpStatus.OK;
 @Validated
 @RequiredArgsConstructor
 @EnableMethodSecurity
+@Transactional
 public class PersonController extends ExceptionHandling {
     private final PersonService personService;
     private final AuthenticationManager authenticationManager;
