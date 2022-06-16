@@ -11,6 +11,19 @@ spring:
     username: postgres
     password: password
     url: jdbc:postgresql://localhost:5432/pg_elektron
+  mail:
+    host: smtp.elasticemail.com
+    port: 2525
+    username: pg-elektron.spring@gmail.com
+    password: 0104E3DE156BC53AA33ADF47DA118BAC503E
+    properties:
+      mail:
+        transport:
+          protocol: smtp
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
   jpa:
     hibernate:
@@ -28,3 +41,5 @@ spring:
     #              create-target: pg_elektron_database_create.sql
     show-sql: true
     database: postgresql
+
+

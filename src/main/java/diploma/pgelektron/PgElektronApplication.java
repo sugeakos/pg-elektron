@@ -1,9 +1,12 @@
 package diploma.pgelektron;
 
+
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -12,6 +15,9 @@ import org.springframework.web.filter.CorsFilter;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Properties;
+
+import static diploma.pgelektron.constant.EmailConstant.*;
 
 import static diploma.pgelektron.constant.FileConstant.USER_FOLDER;
 
@@ -31,6 +37,7 @@ public class PgElektronApplication {
     public ModelMapper modelMapper() {
         return new ModelMapper();
     }
+
 
     @Bean
     public CorsFilter corsFilter() {

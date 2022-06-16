@@ -174,7 +174,7 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
         user.setAuthorities(getRoleEnumName(role).getAuthorities());
         personRepository.save(user);
         PersonDto returnUser = personConverter.convertEntityToDto(user);
-        emailService.sendNewPasswordEmail(firstName, tempPassword, email);
+        emailService.sendNewUserEmail(firstName, tempPassword, email, tempUsername);
         return returnUser;
     }
 
@@ -306,6 +306,11 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
     @Override
     public PersonEntity findPersonByExternalId(UUID externalId) {
         return personRepository.findPersonEntityByExternalId(externalId);
+    }
+
+    @Override
+    public void testEmailSender() {
+        emailService.sendSimpleMessage();
     }
 
 //    @Override

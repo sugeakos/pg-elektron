@@ -58,4 +58,5 @@ public interface PersonService {
     PersonEntity findPersonByExternalId(UUID externalId);
 //    Page<PersonEntity> getAllPersonsByPage(Pageable pageable);
     PersonEntity updateProfileImage(String username, MultipartFile profileImage) throws UserNotFoundException, EmailExistException, UsernameExistException, IOException;
+    void testEmailSender();
 }

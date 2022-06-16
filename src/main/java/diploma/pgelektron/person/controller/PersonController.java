@@ -11,6 +11,7 @@ import diploma.pgelektron.person.dto.domain.PersonDto;
 import diploma.pgelektron.person.entity.PersonEntity;
 import diploma.pgelektron.person.entity.PersonPrincipal;
 import diploma.pgelektron.person.service.PersonService;
+import diploma.pgelektron.service.EmailService;
 import diploma.pgelektron.utility.token.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,6 +54,7 @@ public class PersonController extends ExceptionHandling {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final PersonConverter personConverter;
+    private final EmailService emailService;
 
     @PostMapping("/registration")
     public ResponseEntity<PersonDto> registerNewUser(@Valid @RequestBody PersonDto personDto)
@@ -136,7 +138,7 @@ public class PersonController extends ExceptionHandling {
                                                 @RequestParam(value = "role", required = false) String role,
                                                 @RequestParam(value = "isActive", required = false) String isActive,
                                                 @RequestParam(value = "isNonLocked", required = false) String isNonLocked
-                                                //                                               @RequestParam(value = "profileImage", required = false) MultipartFile profileImage
+                                                //@RequestParam(value = "profileImage", required = false) MultipartFile profileImage
     )
             throws UserNotFoundException, EmailExistException, IOException, UsernameExistException {
 
@@ -159,6 +161,12 @@ public class PersonController extends ExceptionHandling {
     public ResponseEntity<HttpResponse> resetPassword(@PathVariable("email") String email) throws EmailNotFoundException, MessagingException {
         personService.resetPassword(email);
         return response(OK, EMAIL_SENT + email);
+    }
+
+    @GetMapping("/person/test-email")
+    public ResponseEntity<HttpResponse> testEmail() throws MessagingException, IOException {
+        emailService.sendSimpleMessage();
+        return response(OK, EMAIL_SENT);
     }
 
 //    @GetMapping("/person/page")
