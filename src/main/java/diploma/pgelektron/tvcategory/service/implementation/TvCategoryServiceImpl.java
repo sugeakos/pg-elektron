@@ -73,6 +73,11 @@ public class TvCategoryServiceImpl implements TvCategoryService {
         return tvCategoryRepository.findTvCategoryEntityByDescription(description);
     }
 
+    @Override
+    public String findCatById(Long id) {
+        return tvCategoryRepository.findDescripton(id);
+    }
+
     public UUID generateNewExternalId(){
        return UUID.randomUUID();
     }

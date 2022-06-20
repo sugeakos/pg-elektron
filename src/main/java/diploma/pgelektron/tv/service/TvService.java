@@ -14,10 +14,13 @@ import java.util.UUID;
 
 public interface TvService {
     TvDto saveTv(TvDto dto);
-    TvDto getTvById(UUID id);
-    TvDto createNewTv(String email, String tvCategoryDescription, String errorSeenByCustomer, String reservedDateToRepair) throws ParseException;
+    TvEntity getTvById(UUID id);
+    //TvDto createNewTv(String email, String tvCategoryDescription, String errorSeenByCustomer, String reservedDateToRepair) throws ParseException;
+    TvDto createNewTv(TvDto tvDto) throws ParseException;
+
     List<TvDto> findAllTvsByPersonEmail(String personEmail);
     List<TvDto> listAllTv();
-    TvDto updateTv(UUID externalTvId, String repairedError, String price) throws ParseException;
-    TvDto updateTvReservedDate(UUID externalId, String reservedDateToRepair) throws ParseException;
+    TvDto updateTv(TvDto tvDto) throws ParseException;
+    TvDto updateTvReservedDate(TvDto tvDto) throws ParseException;
+    List<TvEntity> findTvByReservedDateToRepair(Date reservedDateToRepair);
 }

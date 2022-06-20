@@ -15,6 +15,8 @@ public interface TvCategoryRepository extends JpaRepository<TvCategoryEntity, Lo
     @Query(value = "select description from tv_category where external_id = ?1",nativeQuery = true)
     String findDescriptionById(UUID categoryExternalId);
 
+    @Query(value = "select description from tv_category where id = ?1", nativeQuery = true)
+    String findDescripton(Long id);
     @Query(value ="select * from tv_category order by description asc" ,nativeQuery = true)
     List<TvCategoryEntity> findAllCatOrderByDescriptionAsc();
 }

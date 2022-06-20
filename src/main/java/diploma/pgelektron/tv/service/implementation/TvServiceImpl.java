@@ -1,5 +1,6 @@
 package diploma.pgelektron.tv.service.implementation;
 
+import diploma.pgelektron.domain.HttpResponse;
 import diploma.pgelektron.person.dto.converter.PersonConverter;
 import diploma.pgelektron.person.service.PersonService;
 import diploma.pgelektron.tv.dto.converter.TvConverter;
@@ -26,6 +27,9 @@ import java.util.Locale;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static diploma.pgelektron.constant.TvConstant.DATE_ALREADY_TAKEN;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+
 @Service
 @AllArgsConstructor
 @Transactional
@@ -48,69 +52,66 @@ public class TvServiceImpl implements TvService {
     }
 
     @Override
-    public TvDto getTvById(UUID id) {
-        TvEntity entity = tvRepository.findTvEntityByExternalId(id);
-        return tvConverter.convertEntityToDto(entity);
+    public TvEntity getTvById(UUID id) {
+
+        return tvRepository.findTvByExternalId(id);
     }
 
 
-
     @Override
-    public TvDto createNewTv(String email, String tvCategoryDescription,
-                             String errorSeenByCustomer, String reservedDateToRepair) throws ParseException {
+    public TvDto createNewTv(TvDto tvDto) throws ParseException {
+        //tvDto.setExternalId(generateNewExternalId());
 
-        log.info("DATUM STRING: " + reservedDateToRepair);
-        Date newFormattedDate = DateUtils.parseDate(reservedDateToRepair,new String[] {"yyyy-MM-dd"});
-        log.info("DATUM: " + newFormattedDate);
-        TvDto dto = new TvDto();
-        dto.setExternalId(generateNewExternalId());
-        dto.setPersonEmail(email);
-        dto.setTvCategoryDescription(tvCategoryDescription);
-        dto.setErrorSeenByCustomer(errorSeenByCustomer);
-        dto.setReservedDateToRepair(newFormattedDate);
-
-        TvEntity savedEntity = tvConverter.convertDtoToEntity(dto);
+        TvEntity savedEntity = tvConverter.convertDtoToEntity(tvDto);
         savedEntity.setItStillInProgress(true);
-        savedEntity.setPersonEntity(personService.findPersonByEmail(email));
-        savedEntity.setTvCategoryEntityId(tvCategoryService.getTvByDescription(tvCategoryDescription));
+        savedEntity.setPersonEntity(personService.findPersonByEmail(tvDto.getPersonEmail()));
+        savedEntity.setTvCategoryEntityId(tvCategoryService.getTvByDescription(tvDto.getTvCategoryDescription()));
+        savedEntity.setExternalId(generateNewExternalId());
+        savedEntity.setPrice(null);
         tvRepository.save(savedEntity);
-        return dto;
+        return tvDto;
+
+
     }
 
     @Override
     public List<TvDto> findAllTvsByPersonEmail(String personEmail) {
         List<TvEntity> findTvs = tvRepository.findAllTvByPersonEmail(personEmail);
-        return findTvs.stream().map(entity -> mapper.map(entity,TvDto.class)).collect(Collectors.toList());
+        return findTvs.stream().map(entity -> mapper.map(entity, TvDto.class)).collect(Collectors.toList());
     }
 
     @Override
     public List<TvDto> listAllTv() {
         List<TvEntity> findTvs = tvRepository.findAll();
-        return findTvs.stream().map(entity -> mapper.map(entity,TvDto.class)).collect(Collectors.toList());
+        return findTvs.stream().map(entity -> mapper.map(entity, TvDto.class)).collect(Collectors.toList());
     }
 
     @Override
-    public TvDto updateTv(UUID externalTvId, String repairedError, String price) throws ParseException {
-        TvEntity entity = tvRepository.findTvEntityByExternalId(externalTvId);
-        Long newPrice = Long.parseLong(price);
-        entity.setRepairedError(repairedError);
+    public TvDto updateTv(TvDto tvDto) throws ParseException {
+        TvEntity entity = tvRepository.findTvEntityByExternalId(tvDto.getExternalId());
+        entity.setRepairedError(tvDto.getRepairedError());
         entity.setDateOfCorrection(new Date());
-        entity.setPrice(newPrice);
+        entity.setPrice(tvDto.getPrice());
         entity.setItStillInProgress(false);
         tvRepository.save(entity);
         return tvConverter.convertEntityToDto(entity);
     }
 
     @Override
-    public TvDto updateTvReservedDate(UUID externalId, String reservedDateToRepair) throws ParseException {
-        Date newDate = DateUtils.parseDate(reservedDateToRepair,"yyyy-MM-dd");
-        TvEntity entity = tvRepository.findTvEntityByExternalId(externalId);
-        entity.setReservedDateToRepair(newDate);
+    public TvDto updateTvReservedDate(TvDto tvDto) throws ParseException {
+        TvEntity entity = tvRepository.findTvEntityByExternalId(tvDto.getExternalId());
+        entity.setReservedDateToRepair(tvDto.getReservedDateToRepair());
         tvRepository.save(entity);
         return tvConverter.convertEntityToDto(entity);
+
     }
 
-    private UUID generateNewExternalId(){
+    @Override
+    public List<TvEntity> findTvByReservedDateToRepair(Date reservedDateToRepair) {
+        return tvRepository.findTvEntitiesByReservedDateToRepair(reservedDateToRepair);
+    }
+
+    private UUID generateNewExternalId() {
         return UUID.randomUUID();
     }
 }

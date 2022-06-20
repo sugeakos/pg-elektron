@@ -17,4 +17,6 @@ public interface TvCategoryService {
     TvCategoryDto saveTvCategoryDto(String description);
     TvCategoryEntity findCategoryByDescription(String description);
     String findCategoryDescription(UUID externalCategoryId);
+
+    String findCatById(Long id);
 }
