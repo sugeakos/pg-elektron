@@ -91,6 +91,7 @@ public class PersonEntity implements Serializable {
     private boolean isActive;
     private boolean isNotLocked;
 
+    private String verification;
 
     public PersonEntity(String firstName,
                         String lastName,
@@ -107,7 +108,8 @@ public class PersonEntity implements Serializable {
                         String role,
                         String[] authorities,
                         boolean isActive,
-                        boolean isNotLocked) {
+                        boolean isNotLocked,
+                        String verification) {
 
         this.firstName = firstName;
         this.lastName = lastName;
@@ -125,6 +127,7 @@ public class PersonEntity implements Serializable {
         this.authorities = authorities;
         this.isActive = isActive;
         this.isNotLocked = isNotLocked;
+        this.verification = verification;
     }
 
 

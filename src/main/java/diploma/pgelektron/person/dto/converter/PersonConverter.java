@@ -35,7 +35,7 @@ public class PersonConverter {
         entity.setAuthorities(dto.getAuthorities());
         entity.setActive(dto.isActive());
         entity.setNotLocked(dto.isNotLocked());
-
+        entity.setVerification(dto.getVerification());
         return entity;
     }
 
@@ -62,7 +62,7 @@ public class PersonConverter {
         dto.setAuthorities(entity.getAuthorities());
         dto.setActive(entity.isActive());
         dto.setNotLocked(entity.isNotLocked());
-
+        dto.setVerification(entity.getVerification());
         return dto;
     }
 }

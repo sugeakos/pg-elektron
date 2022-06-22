@@ -16,6 +16,7 @@ import diploma.pgelektron.utility.token.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.security.RolesAllowed;
 import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
@@ -58,16 +60,9 @@ public class PersonController extends ExceptionHandling {
 
     @PostMapping("/registration")
     public ResponseEntity<PersonDto> registerNewUser(@Valid @RequestBody PersonDto personDto)
-            throws UserNotFoundException, EmailExistException, UsernameExistException {
+            throws UserNotFoundException, EmailExistException, UsernameExistException, MessagingException {
         PersonDto newPersonDto =
-                personService.register(personDto.getFirstName(),
-                        personDto.getLastName(),
-                        personDto.getUsername(),
-                        personDto.getEmail(),
-                        personDto.getPassword(),
-                        personDto.getPhoneFix(),
-                        personDto.getPhoneMobile(),
-                        personDto.getAddress());
+                personService.register(personDto);
         return new ResponseEntity<>(newPersonDto, OK);
     }
 
@@ -99,28 +94,20 @@ public class PersonController extends ExceptionHandling {
 
     @RolesAllowed({"ROLE_ADMIN, ROLE_SUPER_ADMIN"})
     @PostMapping("/person/add")
-    public ResponseEntity<PersonDto> addNewPerson(@Valid @RequestParam("firstName") String firstName,
-                                                  @Valid @RequestParam("lastName") String lastName,
-                                                  @Valid @RequestParam(value = "username", required = false) String username,
-                                                  @Valid @RequestParam("email") String email,
-                                                  @Valid @RequestParam("phoneFix") String phoneFix,
-                                                  @Valid @RequestParam("phoneMobile") String phoneMobile,
-                                                  @Valid @RequestParam("address") String address,
-                                                  @Valid @RequestParam("role") String role,
-                                                  @Valid @RequestParam("isNonLocked") String isNonLocked,
-                                                  @Valid @RequestParam("isActive") String isActive)
+    public ResponseEntity<PersonDto> addNewPerson(@Valid @RequestBody PersonDto personDto)
             throws UserNotFoundException, EmailExistException, MessagingException, IOException, UsernameExistException {
         PersonDto newPersonEntity =
-                personService.addNewUser(firstName,
-                        lastName,
-                        username,
-                        email,
-                        phoneFix,
-                        phoneMobile,
-                        address,
-                        role,
-                        Boolean.parseBoolean(isNonLocked),
-                        Boolean.parseBoolean(isActive));
+                personService.addNewUser(personDto.getFirstName(),
+                        personDto.getLastName(),
+                        personDto.getUsername(),
+                        personDto.getEmail(),
+                        personDto.getPhoneFix(),
+                        personDto.getPhoneMobile(),
+                        personDto.getAddress(),
+                        personDto.getRole(),
+                        personDto.isNotLocked(),
+                        personDto.isActive());
+
         return new ResponseEntity<>(newPersonEntity, OK);
 
     }
@@ -148,13 +135,21 @@ public class PersonController extends ExceptionHandling {
                 Boolean.parseBoolean(isNonLocked), Boolean.parseBoolean(isActive));
         return new ResponseEntity<>(updatedPersonDto, OK);
     }
-
     @RolesAllowed({"ROLE_ADMIN, ROLE_SUPER_ADMIN"})
     @DeleteMapping("/person/delete/{id}")
     public ResponseEntity<HttpResponse> deleteUser(@PathVariable("id") UUID id) {
 
         personService.deleteUser(id);
         return response(OK, USER_DELETED_SUCCESSFULLY);
+    }
+
+    @GetMapping("/verify/{code}")
+    public ResponseEntity<?> verifyUser(@PathVariable("code") String code) {
+        if (personService.verifyPerson(code)){
+            return response(OK,"Sikeresen aktiválta a fiókját");
+        } else {
+            return response(BAD_REQUEST,"Sikertelen aktiválás");
+        }
     }
 
     @GetMapping("/person/reset-password/{email}")
@@ -189,10 +184,14 @@ public class PersonController extends ExceptionHandling {
 
     private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message) {
         return new ResponseEntity<>(
-                new HttpResponse(httpStatus.value(), httpStatus, httpStatus.getReasonPhrase().toUpperCase(), message.toUpperCase()),
+                new HttpResponse(httpStatus.value(), httpStatus, httpStatus.getReasonPhrase().toUpperCase(), message),
                 httpStatus);
     }
 
+    private String getSiteURL(HttpServletRequest request) {
+        String siteURL = request.getRequestURL().toString();
+        return siteURL.replace(request.getServletPath(), "");
+    }
     private HttpHeaders getJwtHeader(PersonPrincipal personPrincipal) {
         HttpHeaders headers = new HttpHeaders();
         headers.add(JWT_TOKEN_HEADER, jwtTokenProvider.generateJwtToken(personPrincipal));

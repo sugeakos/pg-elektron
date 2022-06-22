@@ -1,5 +1,6 @@
 package diploma.pgelektron.person.repository;
 
+import diploma.pgelektron.person.dto.domain.PersonDto;
 import diploma.pgelektron.person.entity.PersonEntity;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,5 +18,7 @@ public interface PersonRepository extends JpaRepository<PersonEntity, Long>, Pag
     @Query(value ="Select * from person order by first_name desc" ,nativeQuery = true)
     List<PersonEntity> findAllOrderByFirstNameAsc();
 
+    @Query(value = "select * from person where verification = ?1", nativeQuery = true)
+    PersonEntity findPersonByVerification(String verification);
 
 }

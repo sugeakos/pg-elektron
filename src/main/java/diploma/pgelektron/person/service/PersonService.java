@@ -16,47 +16,48 @@ import java.util.List;
 import java.util.UUID;
 
 public interface PersonService {
-    PersonDto register (String firstName,
-                        String lastName,
-                        String username,
-                        String email,
-                        String password,
-                        String phoneFix,
-                        String phoneMobile,
-                        String address)
-            throws UserNotFoundException, EmailExistException, UsernameExistException;
+    PersonDto register(PersonDto personDto)
+            throws UserNotFoundException, EmailExistException, UsernameExistException, MessagingException;
+
     List<PersonDto> getUsers();
+
     PersonEntity findPersonByUsername(String username);
+
     PersonEntity findPersonByEmail(String email);
+
     PersonDto addNewUser(String firstName,
-                            String lastName,
-                            String username,
-                            String email,
-                            String phoneFix,
-                            String phoneMobile,
-                            String address,
-                            String role,
-                            boolean isNonLocked,
-                            boolean isActive) throws UserNotFoundException, EmailExistException, UsernameExistException, IOException, MessagingException;
+                         String lastName,
+                         String username,
+                         String email,
+                         String phoneFix,
+                         String phoneMobile,
+                         String address,
+                         String role,
+                         boolean isNonLocked,
+                         boolean isActive) throws UserNotFoundException, EmailExistException, UsernameExistException, IOException, MessagingException;
 
     PersonDto updateUser(String currentUsername,
-                            String newFirstName,
-                            String newLastName,
-                            String newUsername,
-                            String newEmail,
-                            String newPassword,
-                            String newPhoneFix,
-                            String newPhoneMobile,
-                            String address,
-                            String role,
-                            boolean isNonLocked,
-                            boolean isActive) throws UserNotFoundException, EmailExistException, UsernameExistException, IOException;
+                         String newFirstName,
+                         String newLastName,
+                         String newUsername,
+                         String newEmail,
+                         String newPassword,
+                         String newPhoneFix,
+                         String newPhoneMobile,
+                         String address,
+                         String role,
+                         boolean isNonLocked,
+                         boolean isActive) throws UserNotFoundException, EmailExistException, UsernameExistException, IOException;
 
     void deleteUser(UUID id);
+
     void resetPassword(String email) throws EmailNotFoundException, MessagingException;
 
     PersonEntity findPersonByExternalId(UUID externalId);
-//    Page<PersonEntity> getAllPersonsByPage(Pageable pageable);
+
+    //    Page<PersonEntity> getAllPersonsByPage(Pageable pageable);
     PersonEntity updateProfileImage(String username, MultipartFile profileImage) throws UserNotFoundException, EmailExistException, UsernameExistException, IOException;
+
     void testEmailSender();
+    boolean verifyPerson (String verification);
 }

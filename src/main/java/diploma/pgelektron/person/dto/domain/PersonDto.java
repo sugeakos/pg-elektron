@@ -54,4 +54,6 @@ public class PersonDto {
     private String[] authorities;
     private boolean isActive;
     private boolean isNotLocked;
+
+    private String verification;
 }

@@ -47,8 +47,7 @@ import static diploma.pgelektron.constant.FileConstant.*;
 import static diploma.pgelektron.constant.PersonServiceImplConstant.*;
 import static diploma.pgelektron.enumeration.Role.ROLE_USER;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.*;
 
 
 @Service
@@ -96,52 +95,40 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
 
 
     @Override
-    public PersonDto register(String firstName,
-                                 String lastName,
-                                 String username,
-                                 String email,
-                                 String password,
-                                 String phoneFix,
-                                 String phoneMobile,
-                                 String address)
-            throws UserNotFoundException, EmailExistException, UsernameExistException {
-        validateNewUsernameAndEmail(EMPTY, username, email);
-        PersonDto user = new PersonDto();
-        user.setExternalId(generateNewExternalId());
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setUsername(username);
-        user.setEmail(email);
-        user.setPassword(bCryptPasswordEncoder.encode(password));
-        user.setPhoneFix(phoneFix);
-        user.setPhoneMobile(phoneMobile);
-        user.setAddress(address);
-        user.setJoinDate(new Date());
-        user.setActive(true);
-        user.setNotLocked(true);
-        user.setRole(ROLE_USER.name());
-        user.setAuthorities(ROLE_USER.getAuthorities());
-        PersonEntity savedUser = personConverter.convertDtoToEntity(user);
+    public PersonDto register(PersonDto personDto)
+            throws UserNotFoundException, EmailExistException, UsernameExistException, MessagingException {
+        validateNewUsernameAndEmail(EMPTY, personDto.getUsername(), personDto.getEmail());
+
+        personDto.setExternalId(generateNewExternalId());
+        personDto.setPassword(bCryptPasswordEncoder.encode(personDto.getPassword()));
+        personDto.setJoinDate(new Date());
+        personDto.setActive(false);
+        personDto.setNotLocked(true);
+        personDto.setRole(ROLE_USER.name());
+        personDto.setAuthorities(ROLE_USER.getAuthorities());
+        personDto.setVerification(generateNewExternalId().toString());
+        PersonEntity savedUser = personConverter.convertDtoToEntity(personDto);
         personRepository.save(savedUser);
-        return user;
+        emailService.sendVerificationEmail(personDto);
+        return personDto;
     }
 
 
     @Override
     public PersonDto addNewUser(String firstName,
-                                   String lastName,
-                                   String username,
-                                   String email,
-                                   String phoneFix,
-                                   String phoneMobile,
-                                   String address,
-                                   String role,
-                                   boolean isNonLocked,
-                                   boolean isActive)
+                                String lastName,
+                                String username,
+                                String email,
+                                String phoneFix,
+                                String phoneMobile,
+                                String address,
+                                String role,
+                                boolean isNonLocked,
+                                boolean isActive)
             throws UserNotFoundException, EmailExistException, UsernameExistException, IOException, MessagingException {
 
         String tempUsername = generateNewUsername(firstName);
-        if(username.equals("")) {
+        if (username.equals("")) {
 
             validateNewUsernameAndEmail(EMPTY, tempUsername, email);
         } else {
@@ -155,7 +142,7 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
         user.setFirstName(firstName);
         user.setLastName(lastName);
 
-        if(username.equals("")) {
+        if (username.equals("")) {
             user.setUsername(tempUsername);
         } else {
             user.setUsername(username);
@@ -175,6 +162,7 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
         personRepository.save(user);
         PersonDto returnUser = personConverter.convertEntityToDto(user);
         emailService.sendNewUserEmail(firstName, tempPassword, email, tempUsername);
+        emailService.sendVerificationEmail(returnUser);
         return returnUser;
     }
 
@@ -198,17 +186,17 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
 
     @Override
     public PersonDto updateUser(String currentUsername,
-                                   String newFirstName,
-                                   String newLastName,
-                                   String newUsername,
-                                   String newEmail,
-                                   String newPassword,
-                                   String newPhoneFix,
-                                   String newPhoneMobile,
-                                   String newAddress,
-                                   String role,
-                                   boolean isNonLocked,
-                                   boolean isActive)
+                                String newFirstName,
+                                String newLastName,
+                                String newUsername,
+                                String newEmail,
+                                String newPassword,
+                                String newPhoneFix,
+                                String newPhoneMobile,
+                                String newAddress,
+                                String role,
+                                boolean isNonLocked,
+                                boolean isActive)
             throws UserNotFoundException, EmailExistException, UsernameExistException, IOException {
         PersonEntity currentUser = validateNewUsernameAndEmail(currentUsername, newUsername, newEmail);
 
@@ -233,7 +221,7 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
             currentUser.setUsername(newUsername);
         }
 
-        if (currentUser.getEmail().equals(newEmail)){
+        if (currentUser.getEmail().equals(newEmail)) {
             currentUser.setEmail(currentUser.getEmail());
         } else {
             currentUser.setEmail(newEmail);
@@ -284,7 +272,7 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
 
     @Override
     public void resetPassword(String email) throws EmailNotFoundException, MessagingException {
-        PersonEntity  user = personRepository.findPersonEntityByEmail(email) ;
+        PersonEntity user = personRepository.findPersonEntityByEmail(email);
         if (user == null) {
             throw new EmailNotFoundException(NO_USER_FOUND_BY_EMAIL + email);
         }
@@ -293,6 +281,19 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
         user.setPassword(bCryptPasswordEncoder.encode(password));
         personRepository.save(user);
         emailService.sendNewPasswordEmail(user.getFirstName(), password, user.getEmail());
+    }
+
+    @Override
+    public boolean verifyPerson(String verification) {
+        PersonEntity person = personRepository.findPersonByVerification(verification);
+        if (person == null || person.isActive()) {
+            return false;
+        } else {
+            person.setVerification(null);
+            person.setActive(true);
+            personRepository.save(person);
+            return true;
+        }
     }
 
     @Override
@@ -390,7 +391,8 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
                 .path(USER_IMAGE_PATH + username + FORWARD_SLASH + username + DOT + JPG_EXTENSION).toUriString();
     }
 
-    public UUID generateNewExternalId(){
+    public UUID generateNewExternalId() {
         return UUID.randomUUID();
     }
+
 }
