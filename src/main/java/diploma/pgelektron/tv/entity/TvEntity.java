@@ -52,6 +52,7 @@ public class TvEntity {
     private String errorSeenByCustomer;
 
     @Column(nullable = true)
+    @FutureOrPresent
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "CET")
     private Date reservedDateToRepair;
 

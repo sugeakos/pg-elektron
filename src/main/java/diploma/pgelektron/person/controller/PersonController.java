@@ -112,29 +112,19 @@ public class PersonController extends ExceptionHandling {
 
     }
 
-    @PostMapping("/person/update")
-    public ResponseEntity<PersonDto> updateUser(@RequestParam("currentUsername") String currentUsername,
-                                                @RequestParam(value = "firstName", required = false) String firstName,
-                                                @RequestParam(value = "lastName", required = false) String lastName,
-                                                @RequestParam(value = "username") String username,
-                                                @RequestParam(value = "email") String email,
-                                                @RequestParam(value = "password", required = false) String password,
-                                                @RequestParam(value = "phoneFix", required = false) String phoneFix,
-                                                @RequestParam(value = "phoneMobile", required = false) String phoneMobile,
-                                                @RequestParam(value = "address", required = false) String address,
-                                                @RequestParam(value = "role", required = false) String role,
-                                                @RequestParam(value = "isActive", required = false) String isActive,
-                                                @RequestParam(value = "isNonLocked", required = false) String isNonLocked
-                                                //@RequestParam(value = "profileImage", required = false) MultipartFile profileImage
-    )
+    @PostMapping("/person/update/{currentUsername}")
+    public ResponseEntity<PersonDto> updateUser(@RequestBody PersonDto personDto,
+                                                @PathVariable("currentUsername") String currentUsername)
             throws UserNotFoundException, EmailExistException, IOException, UsernameExistException {
 
         PersonDto updatedPersonDto = personService.updateUser(currentUsername,
-                firstName, lastName, username, email, password,
-                phoneFix, phoneMobile, address, role,
-                Boolean.parseBoolean(isNonLocked), Boolean.parseBoolean(isActive));
+                personDto.getFirstName(), personDto.getLastName(), personDto.getUsername(), personDto.getEmail(),
+                personDto.getPassword(),
+                personDto.getPhoneFix(), personDto.getPhoneMobile(), personDto.getAddress(), personDto.getRole(),
+                personDto.isNotLocked(), personDto.isActive());
         return new ResponseEntity<>(updatedPersonDto, OK);
     }
+
     @RolesAllowed({"ROLE_ADMIN, ROLE_SUPER_ADMIN"})
     @DeleteMapping("/person/delete/{id}")
     public ResponseEntity<HttpResponse> deleteUser(@PathVariable("id") UUID id) {
@@ -145,10 +135,10 @@ public class PersonController extends ExceptionHandling {
 
     @GetMapping("/verify/{code}")
     public ResponseEntity<?> verifyUser(@PathVariable("code") String code) {
-        if (personService.verifyPerson(code)){
-            return response(OK,"Sikeresen aktiválta a fiókját");
+        if (personService.verifyPerson(code)) {
+            return response(OK, "Sikeresen aktiválta a fiókját");
         } else {
-            return response(BAD_REQUEST,"Sikertelen aktiválás");
+            return response(BAD_REQUEST, "Sikertelen aktiválás");
         }
     }
 
@@ -192,6 +182,7 @@ public class PersonController extends ExceptionHandling {
         String siteURL = request.getRequestURL().toString();
         return siteURL.replace(request.getServletPath(), "");
     }
+
     private HttpHeaders getJwtHeader(PersonPrincipal personPrincipal) {
         HttpHeaders headers = new HttpHeaders();
         headers.add(JWT_TOKEN_HEADER, jwtTokenProvider.generateJwtToken(personPrincipal));

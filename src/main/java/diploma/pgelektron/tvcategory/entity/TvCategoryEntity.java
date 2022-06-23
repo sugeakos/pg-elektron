@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.RandomUtils;
+import org.checkerframework.common.aliasing.qual.Unique;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -25,5 +26,6 @@ public class TvCategoryEntity {
 
     @NotEmpty
     @NotBlank
+    @Unique
     private String description;
 }

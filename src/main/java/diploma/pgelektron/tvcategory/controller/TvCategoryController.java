@@ -32,7 +32,7 @@ public class TvCategoryController {
     }
 
     @PostMapping("/tv-categories/new")
-    public ResponseEntity<TvCategoryDto> createNewTvCategory(@RequestParam("tvCategory") String description) {
-        return new ResponseEntity<>(tvCategoryService.saveTvCategoryDto(description), OK);
+    public ResponseEntity<TvCategoryDto> createNewTvCategory(@RequestBody TvCategoryDto tvCategoryDto) {
+        return new ResponseEntity<>(tvCategoryService.saveTvCategoryDto(tvCategoryDto.getDescription()), OK);
     }
 }

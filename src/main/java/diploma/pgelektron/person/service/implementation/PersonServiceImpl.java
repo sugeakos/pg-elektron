@@ -227,9 +227,10 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
             currentUser.setEmail(newEmail);
         }
 
-
         if (newPassword.equals("")) {
+            bCryptPasswordEncoder.upgradeEncoding(currentUser.getPassword());
         } else {
+
             currentUser.setPassword(bCryptPasswordEncoder.encode(newPassword));
         }
 

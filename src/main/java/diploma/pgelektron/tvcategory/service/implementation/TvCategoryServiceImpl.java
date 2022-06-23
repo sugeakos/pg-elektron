@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 public class TvCategoryServiceImpl implements TvCategoryService {
     private final TvCategoryRepository tvCategoryRepository;
     private final TvCategoryConverter tvCategoryConverter;
-    private  final ModelMapper mapper;
+    private final ModelMapper mapper;
 
     @Override
     public TvCategoryEntity saveTvCategory(TvCategoryEntity category) {
@@ -31,7 +32,7 @@ public class TvCategoryServiceImpl implements TvCategoryService {
     }
 
     @Override
-    public TvCategoryEntity getTvCategoryById(Long id){
+    public TvCategoryEntity getTvCategoryById(Long id) {
         return tvCategoryRepository.getById(id);
     }
 
@@ -59,13 +60,19 @@ public class TvCategoryServiceImpl implements TvCategoryService {
 
     @Override
     public TvCategoryDto saveTvCategoryDto(String description) {
+        String newDescription = StringUtils.capitalize(description.toLowerCase());
+        List<TvCategoryEntity> allCats = getAllTvCategories();
+        if (allCats.contains(findCategoryByDescription(newDescription))) {
+            return null;
+        } else {
 
-        TvCategoryEntity entity = new TvCategoryEntity();
-        entity.setExternalId(generateNewExternalId());
-        entity.setDescription(description);
-        tvCategoryRepository.save(entity);
+            TvCategoryEntity entity = new TvCategoryEntity();
+            entity.setExternalId(generateNewExternalId());
+            entity.setDescription(newDescription);
+            tvCategoryRepository.save(entity);
 
-        return tvCategoryConverter.convertEntityToDto(entity);
+            return tvCategoryConverter.convertEntityToDto(entity);
+        }
     }
 
     @Override
@@ -78,7 +85,7 @@ public class TvCategoryServiceImpl implements TvCategoryService {
         return tvCategoryRepository.findDescripton(id);
     }
 
-    public UUID generateNewExternalId(){
-       return UUID.randomUUID();
+    public UUID generateNewExternalId() {
+        return UUID.randomUUID();
     }
 }
