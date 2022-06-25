@@ -49,15 +49,15 @@ public interface PersonService {
                          boolean isNonLocked,
                          boolean isActive) throws UserNotFoundException, EmailExistException, UsernameExistException, IOException;
 
-    void deleteUser(UUID id);
+
 
     void resetPassword(String email) throws EmailNotFoundException, MessagingException;
 
     PersonEntity findPersonByExternalId(UUID externalId);
 
-    //    Page<PersonEntity> getAllPersonsByPage(Pageable pageable);
+
     PersonEntity updateProfileImage(String username, MultipartFile profileImage) throws UserNotFoundException, EmailExistException, UsernameExistException, IOException;
 
-    void testEmailSender();
+
     boolean verifyPerson (String verification);
 }

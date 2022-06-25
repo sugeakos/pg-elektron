@@ -4,7 +4,7 @@ public class SecurityConstant {
     public static final long EXPIRATION_TIME = 432_000_000; //5 days in ms
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String JWT_TOKEN_HEADER = "Jwt-Token";
-    public static final String TOKEN_CANNOT_BE_VERIFIED = "Token Cannot be Verified";
+    public static final String TOKEN_CANNOT_BE_VERIFIED = "A Tokent nem lehet hitelesíteni";
     public static final String PG_ELEKTRON_DOO = "PG Elektron, DOO";
     public static final String PG_ELEKTRON_ADMINISTRATION = "PG Elektron Reservation Portal";
     public static final String AUTHORITIES = "authorities";

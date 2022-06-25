@@ -40,12 +40,7 @@ public class TvController {
 
     @PostMapping("/new")
     @PreAuthorize("hasAnyAuthority('tv:create')")
-    public ResponseEntity<TvDto> createNewTv(@RequestBody TvDto tvDto
-//            @RequestParam("personEmail") String personEmail,
-//            @RequestParam("tvCategoryDescription") String tvCategoryDescription,
-//            @RequestParam("errorSeenByCustomer") String errorSeenByCustomer,
-//            @RequestParam("reservedDateToRepair") String reservedDateToRepair
-    ) throws ParseException {
+    public ResponseEntity<TvDto> createNewTv(@RequestBody TvDto tvDto) throws ParseException {
         List<TvEntity> reservedDateResults = tvService.findTvByReservedDateToRepair(tvDto.getReservedDateToRepair());
         if (reservedDateResults.isEmpty()) {
             TvDto newDto = tvService.createNewTv(tvDto);

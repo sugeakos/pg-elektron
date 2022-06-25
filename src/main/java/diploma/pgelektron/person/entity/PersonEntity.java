@@ -129,6 +129,4 @@ public class PersonEntity implements Serializable {
         this.isNotLocked = isNotLocked;
         this.verification = verification;
     }
-
-
 }

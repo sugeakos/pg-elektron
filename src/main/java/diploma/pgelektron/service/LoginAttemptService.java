@@ -3,6 +3,7 @@ package diploma.pgelektron.service;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ExecutionException;
@@ -10,6 +11,7 @@ import java.util.concurrent.ExecutionException;
 import static java.util.concurrent.TimeUnit.MINUTES;
 
 @Service
+
 public class LoginAttemptService {
 
     public static final int MAXIMUM_NUMBER_OF_ATTEMPTS = 5;

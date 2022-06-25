@@ -125,14 +125,6 @@ public class PersonController extends ExceptionHandling {
         return new ResponseEntity<>(updatedPersonDto, OK);
     }
 
-    @RolesAllowed({"ROLE_ADMIN, ROLE_SUPER_ADMIN"})
-    @DeleteMapping("/person/delete/{id}")
-    public ResponseEntity<HttpResponse> deleteUser(@PathVariable("id") UUID id) {
-
-        personService.deleteUser(id);
-        return response(OK, USER_DELETED_SUCCESSFULLY);
-    }
-
     @GetMapping("/verify/{code}")
     public ResponseEntity<?> verifyUser(@PathVariable("code") String code) {
         if (personService.verifyPerson(code)) {
@@ -153,12 +145,6 @@ public class PersonController extends ExceptionHandling {
         emailService.sendSimpleMessage();
         return response(OK, EMAIL_SENT);
     }
-
-//    @GetMapping("/person/page")
-//    public ResponseEntity<Page<PersonEntity>> getAllPersonsInPage(@PathParam("page") int page) {
-//        Pageable pageable = (Pageable) PageRequest.of(page,3);
-//        return new ResponseEntity<>(personService.getAllPersonsByPage((java.awt.print.Pageable) pageable),OK);
-//    }
 
     private void authenticate(String username, String password) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));

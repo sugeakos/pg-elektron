@@ -75,17 +75,6 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
             validateLoginAttempt(user);
             user.setLastLoginDateDisplay(user.getLastLoginDate());
             user.setLastLoginDate(new Date());
-            user.setFirstName(user.getFirstName());
-            user.setLastName(user.getLastName());
-            user.setEmail(user.getEmail());
-            user.setPhoneFix(user.getPhoneFix());
-            user.setPhoneMobile(user.getPhoneMobile());
-            user.setAddress(user.getAddress());
-            user.setJoinDate(user.getJoinDate());
-            user.setActive(user.isActive());
-            user.setNotLocked(user.isNotLocked());
-            user.setRole(getRoleEnumName(user.getRole().toUpperCase()).name());
-            user.setAuthorities(getRoleEnumName(user.getRole().toUpperCase()).getAuthorities());
             personRepository.save(user);
             PersonPrincipal personPrincipal = new PersonPrincipal(user);
             log.info("User found by username: " + username);
@@ -182,8 +171,6 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
     public PersonEntity findPersonByEmail(String email) {
         return personRepository.findPersonEntityByEmail(email);
     }
-
-
     @Override
     public PersonDto updateUser(String currentUsername,
                                 String newFirstName,
@@ -266,12 +253,6 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
     }
 
     @Override
-    public void deleteUser(UUID id) {
-        PersonEntity deletedPerson = personRepository.findPersonEntityByExternalId(id);
-        personRepository.deleteById(deletedPerson.getId());
-    }
-
-    @Override
     public void resetPassword(String email) throws EmailNotFoundException, MessagingException {
         PersonEntity user = personRepository.findPersonEntityByEmail(email);
         if (user == null) {
@@ -310,19 +291,12 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
         return personRepository.findPersonEntityByExternalId(externalId);
     }
 
-    @Override
-    public void testEmailSender() {
-        emailService.sendSimpleMessage();
-    }
-
-//    @Override
-//    public Page<PersonEntity> getAllPersonsByPage(java.awt.print.Pageable pageable) {
-//        return personRepository.findAll((Pageable) pageable);
-//    }
-
     private void validateLoginAttempt(PersonEntity user) {
         if (user.isNotLocked()) {
-            user.setNotLocked(!loginAttemptService.hasExceededMaxAttempts(user.getUsername()));
+            if(loginAttemptService.hasExceededMaxAttempts(user.getUsername())){
+                user.setNotLocked(false);
+            }
+
         } else {
             loginAttemptService.evictUserFromLoginAttemptCache(user.getUsername());
         }
