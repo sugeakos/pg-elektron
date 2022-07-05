@@ -19,6 +19,7 @@ public interface TvService {
     TvDto createNewTv(TvDto tvDto) throws ParseException;
 
     List<TvDto> findAllTvsByPersonEmail(String personEmail);
+    List<TvDto> findAllNotRepairedTvByPersonEmail(String personEmail);
     List<TvDto> listAllTv();
     TvDto updateTv(TvDto tvDto) throws ParseException;
     TvDto updateTvReservedDate(TvDto tvDto) throws ParseException;

@@ -74,9 +74,16 @@ public class TvController {
         return new ResponseEntity<>(returnDto, OK);
     }
 
+    @RolesAllowed({"ROLE_ADMIN, ROLE_SUPER_ADMIN"})
     @GetMapping("/{personEmail}")
     public ResponseEntity<List<TvDto>> getAllTvByPerson(@PathVariable("personEmail") String personEmail) {
         List<TvDto> getTvs = tvService.findAllTvsByPersonEmail(personEmail);
+        return new ResponseEntity<>(getTvs, OK);
+    }
+
+    @GetMapping("/not-repaired-yet/{personEmail}")
+    public ResponseEntity<List<TvDto>> getAllNotRepairedTvByPerson(@PathVariable("personEmail") String personEmail) {
+        List<TvDto> getTvs = tvService.findAllNotRepairedTvByPersonEmail(personEmail);
         return new ResponseEntity<>(getTvs, OK);
     }
 

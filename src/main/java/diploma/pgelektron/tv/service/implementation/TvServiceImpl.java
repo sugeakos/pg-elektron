@@ -81,6 +81,12 @@ public class TvServiceImpl implements TvService {
     }
 
     @Override
+    public List<TvDto> findAllNotRepairedTvByPersonEmail(String personEmail) {
+        List<TvEntity> findTvs = tvRepository.findAllNotRepairedTvByPersonEmail(personEmail);
+        return findTvs.stream().map(entity -> mapper.map(entity, TvDto.class)).collect(Collectors.toList());
+    }
+
+    @Override
     public List<TvDto> listAllTv() {
         List<TvEntity> findTvs = tvRepository.findAll();
         return findTvs.stream().map(entity -> mapper.map(entity, TvDto.class)).collect(Collectors.toList());
