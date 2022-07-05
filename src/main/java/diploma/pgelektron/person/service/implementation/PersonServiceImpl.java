@@ -144,7 +144,7 @@ public class PersonServiceImpl implements PersonService, UserDetailsService {
         user.setPhoneMobile(phoneMobile);
         user.setAddress(address);
         user.setJoinDate(new Date());
-        user.setActive(true);
+        user.setActive(false);
         user.setNotLocked(true);
         user.setRole(getRoleEnumName(role).name());
         user.setAuthorities(getRoleEnumName(role).getAuthorities());

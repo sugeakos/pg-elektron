@@ -140,11 +140,7 @@ public class PersonController extends ExceptionHandling {
         return response(OK, EMAIL_SENT + email);
     }
 
-    @GetMapping("/person/test-email")
-    public ResponseEntity<HttpResponse> testEmail() throws MessagingException, IOException {
-        emailService.sendSimpleMessage();
-        return response(OK, EMAIL_SENT);
-    }
+
 
     private void authenticate(String username, String password) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
