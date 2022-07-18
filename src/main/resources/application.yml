@@ -9,7 +9,7 @@ server:
 spring:
   datasource:
     username: postgres
-    password: password
+    password: sugeaPostgres
     url: jdbc:postgresql://localhost:5432/pg_elektron
   mail:
     host: smtp.elasticemail.com
